@@ -1,0 +1,9 @@
+pandas
+pathlib
+keras
+cv2
+glob
+matplotlib
+numpy
+tensorflow
+sklearn
