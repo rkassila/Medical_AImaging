@@ -5,10 +5,12 @@ import matplotlib.pyplot as plt
 import numpy as np
 from tensorflow.keras.callbacks import EarlyStopping
 from tensorflow.keras.metrics import BinaryAccuracy, Recall
-from tensorflow.keras import models, layers
+from tensorflow.keras.applications import VGG16
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense, Flatten
 from sklearn.model_selection import train_test_split
 
-class AutoTrainer:
+class AutoVgg16:
 
     def __init__(self, image_file_normal, image_file_symptoms, limit):
         self.image_file_normal = image_file_normal
@@ -18,7 +20,7 @@ class AutoTrainer:
         self.file_reader_symptoms()
         self.labels_normal, self.labels_symptom = self.label_maker()
         self.X_train, self.X_test, self.y_train, self.y_test = self.train_test_images()
-        self.model = self.initialize_model()
+        self.model = self.initialize_vgg16_model()
         self.history = self.get_history()
 
 
@@ -43,46 +45,36 @@ class AutoTrainer:
 
         return X_train, X_test, y_train, y_test
 
-    def initialize_model(self):
 
-        model = None
-        metrics = None
+
+
+    def initialize_vgg16_model(self):
 
         metrics = [BinaryAccuracy(name='binary_accuracy'), Recall(name='recall')]
 
-        model = models.Sequential()
+        base_model = VGG16(weights='imagenet', include_top=False, input_shape=(224, 224, 3))
 
-        model.add(layers.Conv2D(12, (4,4), activation="relu", input_shape=(224, 224, 3)))
-        model.add(layers.MaxPool2D(pool_size=(2,2)))
+        for layer in base_model.layers:
+            layer.trainable = False
 
-        model.add(layers.Conv2D(8, (3,3), activation="relu"))
-        model.add(layers.MaxPool2D(pool_size=(2,2)))
+        model = Sequential([
+        base_model,
+        Flatten(),
+        Dense(512, activation='relu'),
+        Dense(1, activation='sigmoid')
+        ])
 
-        model.add(layers.Conv2D(8, (2,2), activation="relu"))
-        model.add(layers.MaxPool2D(pool_size=(2,2)))
-
-        model.add(layers.Conv2D(32, (2,2), activation="relu"))
-        model.add(layers.MaxPool2D(pool_size=(2,2)))
-
-        model.add(layers.Conv2D(64, (2,2), activation="relu"))
-        model.add(layers.MaxPool2D(pool_size=(2,2)))
-
-        model.add(layers.Flatten())
-        model.add(layers.Dense(1024, activation='relu'))
-        model.add(layers.Dense(1, activation='sigmoid'))
-
-        model.compile(loss='binary_crossentropy',
-        optimizer='adam',
-        metrics=metrics)
+        model.compile(optimizer='adam', loss='binary_crossentropy', metrics=metrics)
 
         return model
+
 
     def get_history(self):
 
         es = EarlyStopping(patience = 3, restore_best_weights=False)
 
         history = self.model.fit(self.X_train, self.y_train,
-            epochs=100,
+            epochs=5,
             batch_size=128,
             validation_split = 0.2,
             callbacks=[es],
