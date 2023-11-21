@@ -1,5 +1,3 @@
-import pandas as pd
-import pathlib
 import keras
 import cv2
 import glob
