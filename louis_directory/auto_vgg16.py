@@ -3,6 +3,8 @@ import cv2
 import glob
 import matplotlib.pyplot as plt
 import numpy as np
+import os
+import random
 from tensorflow.keras.callbacks import EarlyStopping
 from tensorflow.keras.metrics import BinaryAccuracy, Recall
 from tensorflow.keras.applications import VGG16
@@ -12,10 +14,11 @@ from sklearn.model_selection import train_test_split
 
 class AutoVgg16:
 
-    def __init__(self, image_file_normal, image_file_symptoms, limit):
+    def __init__(self, image_file_normal, image_file_symptoms, limit, epoch):
         self.image_file_normal = image_file_normal
         self.image_file_symptoms = image_file_symptoms
         self.limit = limit
+        self.epoch = epoch
         self.file_reader_normal()
         self.file_reader_symptoms()
         self.labels_normal, self.labels_symptom = self.label_maker()
@@ -25,11 +28,23 @@ class AutoVgg16:
 
 
     def file_reader_normal(self):
-        images_normal = [cv2.imread(file) for file in glob.glob(self.image_file_normal+"*.png")][:self.limit]
+        images_normal = [cv2.imread(file) for file in glob.glob(self.image_file_normal+"*.png")]
+        images_normal = random.sample(images_normal, self.limit)
         self.images_normal = images_normal
 
+
+
+
     def file_reader_symptoms(self):
-        images_symptoms = [cv2.imread(file) for file in glob.glob(self.image_file_symptoms+"*.png")][:self.limit]
+        if isinstance(self.image_file_symptoms, list):
+            images_symptoms = []
+            for directory in self.image_file_symptoms:
+                images_symptoms.extend([cv2.imread(file) for file in glob.glob(os.path.join(directory, "*.png"))])
+                images_symptoms = random.sample(images_symptoms, int(self.limit/len(self.image_file_symptoms)))
+        else:
+            images_symptoms = [cv2.imread(file) for file in glob.glob(self.image_file_symptoms+"*.png")]
+            images_symptoms = random.sample(images_symptoms, self.limit)
+
         self.images_symptoms = images_symptoms
 
     def label_maker(self):
@@ -71,11 +86,11 @@ class AutoVgg16:
 
     def get_history(self):
 
-        es = EarlyStopping(patience = 3, restore_best_weights=False)
+        es = EarlyStopping(patience = 30, restore_best_weights=True)
 
         history = self.model.fit(self.X_train, self.y_train,
-            epochs=5,
-            batch_size=128,
+            epochs=self.epoch,
+            batch_size=32,
             validation_split = 0.2,
             callbacks=[es],
             verbose=1)
@@ -113,7 +128,7 @@ class AutoVgg16:
 
         ax[2].plot(self.history.history['recall'])
         ax[2].plot(self.history.history['val_recall'])
-        ax[2].set_title('Model Recally')
+        ax[2].set_title('Model Recall')
         ax[2].set_ylabel('Recall')
         ax[2].set_xlabel('Epoch')
         ax[2].legend(['Train', 'Validation'], loc='best')
