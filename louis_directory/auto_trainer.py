@@ -23,7 +23,7 @@ class AutoTrainer:
 
 
     def file_reader_normal(self):
-        images_normal = [cv2.imread(file) for file in glob.glob(self.image_file_normal+"*.png")]
+        images_normal = [cv2.imread(file) for file in glob.glob(self.image_file_normal+"*.png")][:self.limit]
         self.images_normal = images_normal
 
     def file_reader_symptoms(self):
