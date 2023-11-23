@@ -8,17 +8,19 @@ import random
 from tensorflow.keras.callbacks import EarlyStopping
 from tensorflow.keras.metrics import BinaryAccuracy, Recall
 from tensorflow.keras.applications import VGG16
+from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense, Flatten
+from tensorflow.keras.layers import Dense, Flatten, Dropout
 from sklearn.model_selection import train_test_split
 
 class AutoVgg16:
 
-    def __init__(self, image_file_normal, image_file_symptoms, limit, epoch):
+    def __init__(self, image_file_normal, image_file_symptoms, limit, epoch, patience):
         self.image_file_normal = image_file_normal
         self.image_file_symptoms = image_file_symptoms
         self.limit = limit
         self.epoch = epoch
+        self.patience = patience
         self.file_reader_normal()
         self.file_reader_symptoms()
         self.labels_normal, self.labels_symptom = self.label_maker()
@@ -33,19 +35,25 @@ class AutoVgg16:
         self.images_normal = images_normal
 
 
-
-
     def file_reader_symptoms(self):
         if isinstance(self.image_file_symptoms, list):
-            images_symptoms = []
+
+            symptoms= []
             for directory in self.image_file_symptoms:
-                images_symptoms.extend([cv2.imread(file) for file in glob.glob(os.path.join(directory, "*.png"))])
-                images_symptoms = random.sample(images_symptoms, int(self.limit/len(self.image_file_symptoms)))
+                directory_images = [cv2.imread(file) for file in glob.glob(os.path.join(directory, "*.png"))]
+
+                symptoms.append(random.sample(directory_images, int(self.limit/len(self.image_file_symptoms))))
+
+                images_symptoms = [item for sublist in symptoms for item in sublist]
+
+
         else:
-            images_symptoms = [cv2.imread(file) for file in glob.glob(self.image_file_symptoms+"*.png")]
+            images_symptoms = [cv2.imread(file) for file in glob.glob(self.image_file_symptoms + "*.png")]
             images_symptoms = random.sample(images_symptoms, self.limit)
 
         self.images_symptoms = images_symptoms
+
+
 
     def label_maker(self):
         labels_normal = [0] * len(self.images_normal)
@@ -66,6 +74,7 @@ class AutoVgg16:
     def initialize_vgg16_model(self):
 
         metrics = [BinaryAccuracy(name='binary_accuracy'), Recall(name='recall')]
+        optimizer = Adam(learning_rate=0.001)
 
         base_model = VGG16(weights='imagenet', include_top=False, input_shape=(224, 224, 3))
 
@@ -76,21 +85,22 @@ class AutoVgg16:
         base_model,
         Flatten(),
         Dense(512, activation='relu'),
+        Dropout(0.2),
         Dense(1, activation='sigmoid')
         ])
 
-        model.compile(optimizer='adam', loss='binary_crossentropy', metrics=metrics)
+        model.compile(optimizer=optimizer, loss='binary_crossentropy', metrics=metrics)
 
         return model
 
 
     def get_history(self):
 
-        es = EarlyStopping(patience = 30, restore_best_weights=True)
+        es = EarlyStopping(patience = self.patience, restore_best_weights=True)
 
         history = self.model.fit(self.X_train, self.y_train,
             epochs=self.epoch,
-            batch_size=32,
+            batch_size=64,
             validation_split = 0.2,
             callbacks=[es],
             verbose=1)
