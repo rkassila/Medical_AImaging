@@ -121,7 +121,7 @@ class AutoTrainer:
 
         ax[2].plot(self.history.history['recall'])
         ax[2].plot(self.history.history['val_recall'])
-        ax[2].set_title('Model Recally')
+        ax[2].set_title('Model Recall')
         ax[2].set_ylabel('Recall')
         ax[2].set_xlabel('Epoch')
         ax[2].legend(['Train', 'Validation'], loc='best')
