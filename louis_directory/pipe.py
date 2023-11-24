@@ -6,7 +6,7 @@ import numpy as np
 
 class Pipe:
 
-    def __init__(self, file_path=str):
+    def __init__(self, file_path):
         self.file_path = file_path
 
     def image_reader(self):
