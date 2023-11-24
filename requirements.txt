@@ -17,3 +17,6 @@ python-dotenv
 seaborn
 glob2
 streamlit
+keras
+transformers
+python-multipart
