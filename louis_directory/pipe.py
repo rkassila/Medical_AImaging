@@ -1,4 +1,3 @@
-
 import cv2
 import tensorflow as tf
 from tensorflow.keras.models import load_model
@@ -14,7 +13,7 @@ class Pipe:
             self.image_array= cv2.imread(self.file_path)
             self.image_array = tf.expand_dims(self.image_array, axis=0)
 
-    # come back to check which class classifes what
+    # come back to check which class classifies what
     def get_organ(self):
         self.image_reader()
         organ_classifier =  load_model('../models/organ_detection_model_final.h5')
