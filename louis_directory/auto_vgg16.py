@@ -12,40 +12,58 @@ from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Flatten, Dropout
 from sklearn.model_selection import train_test_split
-from utils import Utils
 
 
 
 class AutoVgg16:
 
-    def __init__(self, epoch, patience, images_normal, images_symptoms):
-
-        self.images_normal = images_normal
-        self.images_symptoms = images_symptoms
+    def __init__(self,  normal_files, symptoms_files, limit, epoch, patience):
         self.epoch = epoch
-
         self.patience = patience
+
+        self.normal_files = normal_files
+        self.symptoms_files = symptoms_files
+        self.limit = limit
+
+        self.file_reader_normal()
+        self.file_reader_symptoms()
+
         self.labels_normal, self.labels_symptom = self.label_maker()
         self.X_train, self.X_test, self.y_train, self.y_test = self.train_test_images()
+
         self.model = self.initialize_vgg16_model()
         self.history = self.get_history()
 
-    def utils(self):
-        self.utils = Utils(image_file_normal=self.images_normal, image_file_symptoms=self.images_symptoms, limit=300)
-        self.images_normal = self.utils.file_reader_normal()
-        self.images_symptoms = self.utils.file_reader_symptoms()
+    def file_reader_normal(self):
+        images_normal = [cv2.imread(file) for file in glob.glob(self.normal_files+"*.png")]
+        images_normal = random.sample(images_normal, self.limit)
+        self.images_normal = images_normal
+
+    def file_reader_symptoms(self):
+        if self.symptoms_files is not None:
+            if isinstance(self.symptoms_files, list):
+                symptoms_images = []
+                for directory in self.symptoms_files:
+                    directory_images = [cv2.imread(file) for file in glob.glob(os.path.join(directory, "*.png"))]
+                    symptoms_images.extend(random.sample(directory_images, int(self.limit / len(self.symptoms_files))))
+            else:
+                symptoms_images = [cv2.imread(file) for file in glob.glob(self.symptoms_files+"*.png")]
+                symptoms_images = random.sample(symptoms_images, self.limit)
+
+        self.symptoms_images = symptoms_images
+
+
 
     def label_maker(self):
         labels_normal = [0] * len(self.images_normal)
-        labels_symptom = [1] * len(self.images_symptoms)
+        labels_symptom = [1] * len(self.symptoms_images)
 
         return labels_normal, labels_symptom
 
     def train_test_images(self):
-        X = np.concatenate((self.images_symptoms, self.images_normal), axis=0)
-        y = np.concatenate((self.labels_symptom,  self.labels_normal), axis=0)
-        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.2, shuffle = True)
-
+        X = np.concatenate((self.symptoms_images, self.images_normal), axis=0)
+        y = np.concatenate((self.labels_symptom, self.labels_normal), axis=0)
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, shuffle=True)
         return X_train, X_test, y_train, y_test
 
 
