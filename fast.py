@@ -71,7 +71,8 @@ async def predict_organ(file: UploadFile = File(...)):
             disease_status = 'healthy'
             class_prediction = None
 
-        app.state.image = shap_image
+        app.state.shap_image = shap_image
+        app.state.grad_image = grad_image
         return {
             'organ': organ,
             'disease_status': disease_status,
@@ -80,18 +81,10 @@ async def predict_organ(file: UploadFile = File(...)):
         }
             #{'organ': organ, 'disease_status': 'healthy'}
 
-@app.get("/shap-image-X")
-async def shap_image_X():
-    return Response(app.state.image, media_type="image/png")
-
-
 @app.get("/shap-image")
-async def shap_image(file: UploadFile = File(...)):
-    contents = await file.read()
-    img = Image.open(BytesIO(contents))
-    img_array = np.array(img)  # Convert PIL Image to NumPy array
-    img_array = tf.expand_dims(img_array, axis=0)
-    model = organ_detection_model
+async def shap_image():
+    return Response(app.state.shap_image, media_type="image/png")
 
-    img_buffer = generate_shap_image(img_array, model)
-    return FileResponse(img_buffer, media_type="image/png")
+@app.get("/grad-image")
+async def grad_image():
+    return Response(app.state.grad_image, media_type="image/png")
