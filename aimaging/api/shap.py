@@ -25,7 +25,7 @@ def generate_shap_image(image, model):
 
     image = np.squeeze(image, axis=0)
 
-    class_names = ['lung', 'brain', 'knee', 'shoulder', 'spine']
+    class_names = ['lung', 'brain', 'shoulder', 'knee', 'spine']
 
     masker = shap.maskers.Image("blur(128,128)", shape=image.shape)
 
@@ -43,6 +43,7 @@ def generate_shap_image(image, model):
     buf = BytesIO()
     plt.savefig(buf, format='png')
     buf.seek(0)
-
     # Return the image as a StreamingResponse
-    return Response(buf, media_type="image/png")
+    return buf.read()
+
+    #return Response(buf.read(), media_type="image/png")

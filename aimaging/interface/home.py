@@ -2,8 +2,6 @@ import streamlit as st
 from PIL import Image
 import requests
 
-
-
 def app():
     # Set title alignment and size
     st.title("Organ Disease Detector 🔍")
@@ -15,7 +13,6 @@ def app():
     st.image(image, use_column_width=True)
 
     uploaded_image = st.file_uploader("Upload an image of your organ", type=["jpg", "jpeg", "png"])
-
 
     if uploaded_image is not None:
         # Display the uploaded image
@@ -34,10 +31,11 @@ def app():
             # Redirect to the Result page
             st.experimental_rerun()
 
-
 # Function to scan the image
 def scan_image(image):
-    # Placeholder function for scanning the image#
+
     url = "http://127.0.0.1:8000/organ_detection_model"
-    response = requests.get(url)
-    return response.json()
+
+    response = requests.get(url).json()
+
+    return response

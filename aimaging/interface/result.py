@@ -27,15 +27,15 @@ def app():
         st.write("Please upload and scan an image first.")
 
     st.text("SHAP example")
-    shap_image = Image.open('aimaging/interface/shape_example.png')
+    shap_image = Image.open('wais_directory/shape_example.png')
     st.image(shap_image)
     st.divider()
 
     st.text("grad cam example 1")
-    grad_image_1 = Image.open('aimaging/interface/grad_cam_1_example.png')
+    grad_image_1 = Image.open('wais_directory/grad_cam_1_example.png')
     st.image(grad_image_1)
     st.divider()
 
     st.text("grad cam example 2")
-    grad_image_2 = Image.open('aimaging/interface/grad_cam_2_example.png')
+    grad_image_2 = Image.open('wais_directory/grad_cam_2_example.png')
     st.image(grad_image_2)

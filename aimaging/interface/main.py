@@ -28,23 +28,29 @@ class MultiApp:
             """,
             unsafe_allow_html=True)
 
-
         with st.sidebar:
             app = option_menu(
-                menu_title = "Disease detector ",
-                options = ["Home", "Result", "About"],
-                icons = ["house", "list-task", "info-circle-fill"],
-                menu_icon= "clipboard-pulse",
-                default_index= 0,
-                styles = {"container": {"padding": "5!important","background-color":'black'},
-                          "icon": {"color": "white", "font-size": "23px"},
-                          "menu-title": {"color": "white", "font-size": "25px", "margin": "0px", "background-color": "black", "font-weight": "bold"},
-                          "nav-link": {"color":"white","font-size": "20px", "text-align": "left", "margin":"0px", "--hover-color": "#996500"},
-                          "nav-link-selected": {"background-color": "#910a0a"},}
-                )
+                menu_title="Disease detector ",
+                options=["Home", "Result", "About"],
+                icons=["house", "list-task", "info-circle-fill"],
+                menu_icon="clipboard-pulse",
+                default_index=0,
+                styles={"container": {"padding": "5!important", "background-color": 'black'},
+                        "icon": {"color": "white", "font-size": "23px"},
+                        "menu-title": {"color": "white", "font-size": "25px", "margin": "0px", "background-color": "black",
+                                       "font-weight": "bold"},
+                        "nav-link": {"color": "white", "font-size": "20px", "text-align": "left", "margin": "0px",
+                                     "--hover-color": "#996500"},
+                        "nav-link-selected": {"background-color": "#910a0a"}, }
+            )
 
         if app == "Home":
             home.app()
+            # Check if the scanning process has been initiated
+            if st.session_state.get('scan_button_clicked', False):
+                # Automatically switch to the Result page
+                result.app()
+
         if app == "Result":
             result.app()
         if app == "About":
