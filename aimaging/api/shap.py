@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from PIL import Image
 from io import BytesIO
-from fastapi.responses import StreamingResponse
+from fastapi.responses import Response
 
 
 def generateshap(image, model):
@@ -45,4 +45,4 @@ def generate_shap_image(image, model):
     buf.seek(0)
 
     # Return the image as a StreamingResponse
-    return StreamingResponse(buf, media_type="image/png")
+    return Response(buf, media_type="image/png")
