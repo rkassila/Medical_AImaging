@@ -9,7 +9,7 @@ def app():
     st.title("Organ Disease Detector 🔍")
 
     # Read the image
-    image = Image.open('wais_directory/streamlit_bg.png')
+    image = Image.open('aimaging/interface/streamlit_bg.png')
 
     # Display the image with wide layout
     st.image(image, use_column_width=True)
@@ -29,7 +29,7 @@ def app():
             result = scan_image(image)
 
             # Store the result in session_state
-            st.session_state.scan_result = result
+            st.session_state.result = result
 
             # Redirect to the Result page
             st.experimental_rerun()
@@ -38,6 +38,6 @@ def app():
 # Function to scan the image
 def scan_image(image):
     # Placeholder function for scanning the image#
-    url = "http://localhost:8000/organ_detection_model"
+    url = "http://127.0.0.1:8000/organ_detection_model"
     response = requests.get(url)
     return response.json()
