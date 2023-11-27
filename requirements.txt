@@ -20,3 +20,4 @@ streamlit
 keras
 transformers
 python-multipart
+streamlit_option_menu
