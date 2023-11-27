@@ -22,7 +22,6 @@ def generateshap(image, model):
 
 
 def generate_shap_image(image, model):
-    img = np.asarray(image)
     class_names = ['lung', 'brain', 'knee', 'shoulder', 'spine']
 
     masker = shap.maskers.Image("blur(128,128)", shape=img.shape)
