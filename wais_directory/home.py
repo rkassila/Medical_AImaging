@@ -34,4 +34,8 @@ def app():
 # Function to scan the image
 def scan_image(image):
     #code#
-    pass
+    url = "http://127.0.0.1:8000/organ_detection_model"
+
+    response = requests.get(url).json()
+
+    return response
