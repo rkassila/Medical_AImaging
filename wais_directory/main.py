@@ -18,6 +18,17 @@ class MultiApp:
 
     def run():
 
+        st.markdown(
+            """
+            <style>
+                body {
+                    background-color: black;
+                }
+            </style>
+            """,
+            unsafe_allow_html=True)
+
+
         with st.sidebar:
             app = option_menu(
                 menu_title = "Disease detector ",
@@ -27,6 +38,7 @@ class MultiApp:
                 default_index= 0,
                 styles = {"container": {"padding": "5!important","background-color":'black'},
                           "icon": {"color": "white", "font-size": "23px"},
+                          "menu-title": {"color": "white", "font-size": "25px", "margin": "0px", "background-color": "black", "font-weight": "bold"},
                           "nav-link": {"color":"white","font-size": "20px", "text-align": "left", "margin":"0px", "--hover-color": "#996500"},
                           "nav-link-selected": {"background-color": "#910a0a"},}
                 )
