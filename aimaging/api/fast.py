@@ -5,6 +5,8 @@ import numpy as np
 import os
 from tensorflow.keras.models import load_model
 from tensorflow.keras.preprocessing import image
+import cv2
+import tensorflow as tf
 
 app = FastAPI()
 
@@ -21,16 +23,30 @@ def root():
 async def predict_organ(file: UploadFile = File(...)):
     contents = await file.read()
     img = Image.open(BytesIO(contents))
-    img_array = image.img_to_array(img)
-    img_array = np.expand_dims(img_array, axis=0)
+    img_array = np.array(img)  # Convert PIL Image to NumPy array
+    img_array = tf.expand_dims(img_array, axis=0)
 
-    predictions = organ_detection_model.predict(img_array)
-    predicted_organ_index = np.argmax(predictions, axis=1)[0]
+    if img_array is not None:
+        predictions = organ_detection_model.predict(img_array)
+        predicted_organ_index = np.argmax(predictions, axis=1)[0]
 
-    # organ list
-    organ_names = ["knee", "brain", "shoulder", "spine", "lung"]
+        organ_names = ["knee", "brain", "shoulder", "spine", "lung"]
+        organ = organ_names[predicted_organ_index]
 
-    # get organ name
-    predicted_organ = organ_names[predicted_organ_index]
+        model_path = os.path.join(os.getcwd(), 'models', f'../models/{organ}_bin_model.h5')
+        disease_model = load_model(model_path)
 
-    return {"predicted_organ": predicted_organ}
+        disease_prediction = disease_model.predict(img_array)[0][0]
+
+        if disease_prediction >= 0.5:
+            class_model_path = os.path.join(os.getcwd(), 'models', f'../models/{organ}_class_model.h5')
+            class_model = load_model(class_model_path)
+            class_prediction = class_model.predict(img_array)
+
+            return {
+                'organ': organ,
+                'disease_status': 'diseased',
+                'class_prediction': class_prediction.tolist()
+            }
+        else:
+            return {'organ': organ, 'disease_status': 'healthy'}
