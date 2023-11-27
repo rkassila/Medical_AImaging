@@ -24,11 +24,11 @@ class MultiApp:
                 options = ["Home", "Result", "About"],
                 icons = ["house", "list-task", "info-circle-fill"],
                 menu_icon= "clipboard-pulse",
-                default_index= 1,
+                default_index= 0,
                 styles = {"container": {"padding": "5!important","background-color":'black'},
                           "icon": {"color": "white", "font-size": "23px"},
-                          "nav-link": {"color":"white","font-size": "20px", "text-align": "left", "margin":"0px", "--hover-color": "blue"},
-                          "nav-link-selected": {"background-color": "#02ab21"},}
+                          "nav-link": {"color":"white","font-size": "20px", "text-align": "left", "margin":"0px", "--hover-color": "#996500"},
+                          "nav-link-selected": {"background-color": "#910a0a"},}
                 )
 
         if app == "Home":
