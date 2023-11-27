@@ -7,7 +7,7 @@ from tensorflow.keras.models import load_model
 from tensorflow.keras.preprocessing import image
 import cv2
 import tensorflow as tf
-from grad_cam import plot_gradcam
+from aimaging.api.grad_cam import plot_gradcam
 from aimaging.api.shap import generate_shap_image
 from fastapi.responses import FileResponse, Response
 
@@ -63,10 +63,9 @@ async def predict_organ(file: UploadFile = File(...)):
             elif organ == 'lung':
                 class_labels = ['airspace_opacity', 'bronchiectasis', 'nodule',
                                 'parenchyma_destruction', 'interstitial_lung_disease']
+    
+            grad_image = plot_gradcam(class_model, img_array, layer_name='conv2_block1_3_bn')
 
-            # {'organ': organ,
-               # 'disease_status': 'diseased',
-                #'class_prediction': class_prediction.tolist()}
         else:
             disease_status = 'healthy'
             class_prediction = None
@@ -76,9 +75,7 @@ async def predict_organ(file: UploadFile = File(...)):
         return {
             'organ': organ,
             'disease_status': disease_status,
-            'class_prediction': class_prediction,
-            #"shap_image": shap_image,
-        }
+            'class_prediction':class_prediction}
             #{'organ': organ, 'disease_status': 'healthy'}
 
 @app.get("/shap-image")
