@@ -2,9 +2,6 @@ import tensorflow as tf
 import numpy as np
 import matplotlib.pyplot as plt
 from io import BytesIO
-from fastapi.responses import Response
-from tensorflow.keras.applications import ResNet50, imagenet_utils
-from tensorflow.keras.applications.resnet50 import preprocess_input, decode_predictions
 
 def plot_gradcam(model, img_array, layer_name):
     def generate_gradcam(model, img_array, layer_name):
