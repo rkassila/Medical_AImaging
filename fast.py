@@ -9,7 +9,7 @@ import cv2
 import tensorflow as tf
 from grad_cam import plot_gradcam
 from aimaging.api.shap import generate_shap_image
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, Response
 
 
 app = FastAPI()
@@ -44,7 +44,8 @@ async def predict_organ(file: UploadFile = File(...)):
         if disease_prediction >= 0.5:
             class_model_path = os.path.join(os.getcwd(), 'models', f'../models/{organ}_class_model.h5')
             class_model = load_model(class_model_path)
-            class_prediction = class_model.predict(img_array)
+            class_prediction = class_model.predict(img_array).tolist()
+            disease_status = 'diseased'
 
             if organ == 'knee':
                 class_labels = [ 'soft_fluid', 'acl', 'bone_inf', 'chondral',
@@ -63,13 +64,25 @@ async def predict_organ(file: UploadFile = File(...)):
                 class_labels = ['airspace_opacity', 'bronchiectasis', 'nodule',
                                 'parenchyma_destruction', 'interstitial_lung_disease']
 
-            return shap_image
             # {'organ': organ,
                # 'disease_status': 'diseased',
                 #'class_prediction': class_prediction.tolist()}
         else:
-            return shap_image
+            disease_status = 'healthy'
+            class_prediction = None
+
+        app.state.image = shap_image
+        return {
+            'organ': organ,
+            'disease_status': disease_status,
+            'class_prediction': class_prediction,
+            #"shap_image": shap_image,
+        }
             #{'organ': organ, 'disease_status': 'healthy'}
+
+@app.get("/shap-image-X")
+async def shap_image_X():
+    return Response(app.state.image, media_type="image/png")
 
 
 @app.get("/shap-image")
