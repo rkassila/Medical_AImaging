@@ -42,7 +42,12 @@ def generate_shap_image(image, model):
     # Convert the plot to bytes
     buf = BytesIO()
     plt.savefig(buf, format='png')
+<<<<<<< HEAD
+    #buf.seek(0)
+
+=======
     buf.seek(0)
+>>>>>>> dbae1b98be4fb456debe8ca0d815c502d2d754dc
     # Return the image as a StreamingResponse
     return buf.read()
 
