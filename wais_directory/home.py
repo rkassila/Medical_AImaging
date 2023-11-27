@@ -6,7 +6,7 @@ def app():
     st.title("Organ Disease Detector 🔍")
 
     # Read the image
-    image = Image.open('wais_directory/braintest.jpg')
+    image = Image.open('wais_directory/streamlit_bg.png')
 
     # Display the image with wide layout
     st.image(image, use_column_width=True)
@@ -20,16 +20,16 @@ def app():
         image = image.resize((224, 224))
         st.image(image, caption="Uploaded Image", use_column_width=True)
 
-    # Button to trigger the scanning process
-    if st.button("Scan"):
-        # Perform the scanning process here
-        result = scan_image(image)
+        # Button to trigger the scanning process
+        if st.button("Scan"):
+            # Perform the scanning process here
+            result = scan_image(image)
 
-        # Store the result in session_state
-        st.session_state.scan_result = result
+            # Store the result in session_state
+            st.session_state.scan_result = result
 
-        # Redirect to the Result page
-        st.experimental_rerun()
+            # Redirect to the Result page
+            st.experimental_rerun()
 
 
 # Function to scan the image
