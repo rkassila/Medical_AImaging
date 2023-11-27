@@ -65,7 +65,6 @@ def generate_gradcam(img_array, model, layer_name, class_labels):
 layer_names = ['block1_conv2', 'block2_conv1']
 
 def image_gradcam(model, img_array, layer_name):
-    img_array = np.expand_dims(img_array, axis=0)
     grad_model = tf.keras.Model([model.inputs], [model.get_layer(layer_name).output, model.output])
 
     with tf.GradientTape() as tape:
