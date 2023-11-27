@@ -1,9 +1,9 @@
 import shap
 import numpy as np
 
-def generateshap(image, model, class_names):
+def generateshap(image, model):
     img = np.asarray(image)
-    #class_names = ['lung','brain','knee','shoulder','spine']
+    class_names = ['lung','brain','knee','shoulder','spine']
 
     masker = shap.maskers.Image("blur(128,128)", shape=img.shape)
 
