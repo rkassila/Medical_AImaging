@@ -48,27 +48,30 @@ def app():
                 # Display the result
                 if result is not None:
                     # Display the prediction details
-                    st.write("### Analysis Result:")
-                    st.write(f"- Organ: {result.get('Organ', 'N/A')}")
-                    st.write(f"- Disease Status: {result.get('Disease Status', 'N/A')}")
+                    st.write("# Analysis Result:")
+                    st.write(f"<p style='font-size: 30px;'>・Organ: {result.get('Organ', 'N/A')}</p>", unsafe_allow_html=True)
+                    st.write(f"<p style='font-size: 30px;'>・Disease Status: {result.get('Disease Status', 'N/A')}</p>", unsafe_allow_html=True)
 
                     # Display the Class Prediction
+                    st.divider()
                     class_prediction = result.get('Class Prediction', [])
                     if class_prediction:
-                        st.write("### Class Predictions:")
+                        st.write("## Class Predictions:")
 
                         # Sort class predictions by percentage in descending order
                         sorted_predictions = sorted(zip(get_class_names(result['Organ']), class_prediction[0]), key=lambda x: x[1], reverse=True)
 
                         # Display only the top 3 classes
-                        for i, (class_name, percentage) in enumerate(sorted_predictions[:3]):
-                            if i == 0:
-                                # Increase font size for the first class
-                                st.write(f"<p style='font-size:24px;'>{class_name}: {percentage * 100:.2f}%</p>", unsafe_allow_html=True, key=f"class_{i}")
-                            else:
-                                st.write(f"{class_name}: {percentage * 100:.2f}%", key=f"class_{i}")
+                    for i, (class_name, percentage) in enumerate(sorted_predictions[:3]):
+                        if i == 0:
+                            # Increase font size for the first class
+                            st.write(f"<p style='font-size:40px;'>{class_name}: {percentage * 100:.2f}%</p>", unsafe_allow_html=True, key=f"class_{i}")
+                        else:
+                            st.write(f"<p style='font-size: 30px;'>{class_name}: {percentage * 100:.2f}%</p>", unsafe_allow_html=True, key=f"class_{i}")
 
                     # Display the SHAP image
+                    st.divider()
+                    st.write("## Display SHAP Image:")
                     shap_url = "http://127.0.0.1:8000/shap-image"
                     response = requests.get(shap_url)
 
@@ -86,6 +89,8 @@ def app():
 
 
                     # Display the Grad images
+                    st.divider()
+                    st.write("## Display GradCAM Images:")
 
                     col1, col2 = st.columns(2)
 
@@ -101,7 +106,7 @@ def app():
                                 grad_image = Image.open(image_bytes)
                                 # Crop the image to a specific size (adjust these values as needed)
                                 grad_image_cropped = grad_image.crop((150, 60, 500, 427))
-                                st.image(grad_image_cropped, caption="Grad Image 1", use_column_width=True)
+                                st.image(grad_image_cropped, caption="GradCAM Image 1", use_column_width=True)
                             except Exception as e:
                                 st.error(f"Error opening Grad image: {e}")
 
@@ -117,7 +122,7 @@ def app():
                                 grad_image = Image.open(image_bytes)
                                 # Crop the image to a specific size (adjust these values as needed)
                                 grad_image_cropped = grad_image.crop((150, 60, 500, 427))
-                                st.image(grad_image_cropped, caption="Grad Image 2", use_column_width=True)
+                                st.image(grad_image_cropped, caption="GradCAM Image 2", use_column_width=True)
                             except Exception as e:
                                 st.error(f"Error opening Grad image: {e}")
 
