@@ -106,8 +106,8 @@ def app():
                                 st.error(f"Error opening Grad image: {e}")
 
                     with col2:
-                        grad_url = "http://127.0.0.1:8000/grad-image2"
-                        response = requests.get(grad_url)
+                        grad_url2 = "http://127.0.0.1:8000/grad-image2"
+                        response = requests.get(grad_url2)
 
                         if response.status_code == 200:
                             try:
