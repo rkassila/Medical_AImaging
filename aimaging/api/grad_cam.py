@@ -25,13 +25,16 @@ def plot_gradcam(model, img_array, layer_name):
 
     cam = (cam - np.min(cam)) / (np.max(cam) - np.min(cam))
 
-    plt.figure()
+    plt.clf()
+
+    plt.figure(facecolor='black')
     plt.imshow(img_array[0], alpha=0.8)
     plt.imshow(cam, cmap='jet', alpha=0.5)
-    plt.title(f'GradCAM ({layer_name})')
+    plt.title(f'GradCAM ({layer_name})', color='black')
 
     buf = BytesIO()
-    plt.savefig(buf, format='png')
+    plt.savefig(buf, format='png', facecolor='white')  # Save with black background
     buf.seek(0)
+
 
     return buf.read()
