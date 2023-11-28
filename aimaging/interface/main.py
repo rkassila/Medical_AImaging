@@ -1,7 +1,7 @@
 import streamlit as st
 from PIL import Image
 from streamlit_option_menu import option_menu
-import about, home, result
+import about, home
 
 st.set_page_config(
     page_title="Organ Disease Detector 🔍"
@@ -10,14 +10,14 @@ st.set_page_config(
 class MultiApp:
     def __init__(self):
         self.apps = []
-
     def add_app(self, title, function):
         self.apps.append({
             "title": title,
             "function": function
         })
 
-    def run(self):
+    def run():
+
         st.markdown(
             """
             <style>
@@ -31,7 +31,7 @@ class MultiApp:
         with st.sidebar:
             app = option_menu(
                 menu_title="Disease detector ",
-                options=["Home", "Result", "About"],
+                options=["Home", "About"],
                 icons=["house", "list-task", "info-circle-fill"],
                 menu_icon="clipboard-pulse",
                 default_index=0,
@@ -46,18 +46,8 @@ class MultiApp:
 
         if app == "Home":
             home.app()
-            # Check if the scanning process has been initiated
-            if st.session_state.get('scan_button_clicked', False):
-                # Automatically switch to the Result page
-                result.app()
-
-        if app == "Result":
-            result.app()
         if app == "About":
             about.app()
 
-app_runner = MultiApp()
-app_runner.add_app("Home", home.app)
-app_runner.add_app("Result", result.app)
-app_runner.add_app("About", about.app)
-app_runner.run()
+
+    run()

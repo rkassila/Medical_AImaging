@@ -28,6 +28,17 @@ class MultiApp:
             """,
             unsafe_allow_html=True)
 
+        st.markdown(
+            """
+            <style>
+                body {
+                    background-color: black;
+                }
+            </style>
+            """,
+            unsafe_allow_html=True)
+
+
         with st.sidebar:
             app = option_menu(
                 menu_title="Disease detector ",
