@@ -2,14 +2,14 @@ import streamlit as st
 from PIL import Image
 import requests
 import tempfile
-from io import BytesIO
+import io
 
 def app():
     # Set title alignment and size
     st.title("Organ Disease Detector 🔍")
 
     # Read the image
-    image = Image.open('wais_directory/streamlit_bg.png')
+    image = Image.open('aimaging/interface/streamlit_bg.png')
 
     # Display the image with wide layout
     st.image(image, use_column_width=True)
@@ -29,45 +29,44 @@ def app():
             result = scan_image(image)
 
             # Display the result
-            st.write("### Prediction Result:")
             if result is not None:
+                # Display the prediction details
+                st.write("### Analysis Result:")
                 st.write(f"- Organ: {result.get('Organ', 'N/A')}")
                 st.write(f"- Disease Status: {result.get('Disease Status', 'N/A')}")
+                st.write(f"- Class Prediction: {result.get('Class Prediction', 'N/A')}")
 
-                # Display Class Predictions with Percentages
-                class_prediction = result.get('Class Prediction')
-                if class_prediction is not None:
-                    st.write("#### Class Predictions:")
-                    organ_names = ["knee", "brain", "shoulder", "spine", "lung"]
-                    for organ, percentage in zip(organ_names, class_prediction):
-                        st.write(f"- {organ.capitalize()}: {percentage * 100:.2f}%")
+                # Display the SHAP image
+                shap_url = "https://aimaging11-uz7skuvrea-ew.a.run.app/shap-image"
+                response = requests.get(shap_url)
 
-
-                # Display SHAP image
-                st.write("### Display SHAP Image")
-                shap_url = "http://localhost:8000/shap-image"
-                shap_response = requests.get(shap_url)
-                if shap_response.status_code == 200:
-                    shap_image = Image.open(BytesIO(shap_response.content))
-                    st.image(shap_image, caption="SHAP Image", use_column_width=True)
+                if response.status_code == 200:
+                    try:
+                        # Convert binary image data to BytesIO
+                        image_bytes = io.BytesIO(response.content)
+                        # Attempt to open the image
+                        shap_image = Image.open(image_bytes)
+                        st.image(shap_image, caption="SHAP Image", use_column_width=True)
+                    except Exception as e:
+                        st.error(f"Error opening SHAP image: {e}")
                 else:
-                    st.error("Error retrieving SHAP image.")
+                    st.error(f"Error retrieving SHAP image. Status code: {response.status_code}")
 
-                # Display Grad-CAM image
-                st.write("### Display Grad-CAM Image")
-                grad_url = "http://localhost:8000/grad-image"
-                grad_response = requests.get(grad_url)
-                if grad_response.status_code == 200:
-                    grad_image = Image.open(BytesIO(grad_response.content))
-                    st.image(grad_image, caption="Grad-CAM Image", use_column_width=True)
+                # Display the Grad image
+                grad_url = "https://aimaging11-uz7skuvrea-ew.a.run.app/grad-image"
+                response = requests.get(grad_url)
+
+                if response.status_code == 200:
+                    try:
+                        # Convert binary image data to BytesIO
+                        image_bytes = io.BytesIO(response.content)
+                        # Attempt to open the image
+                        grad_image = Image.open(image_bytes)
+                        st.image(grad_image, caption="Grad Image", use_column_width=True)
+                    except Exception as e:
+                        st.error(f"Error opening Grad image: {e}")
                 else:
-                    st.error("Error retrieving Grad-CAM image.")
-
-            else:
-                st.error("Error making prediction. Please try again.")
-
-
-
+                    st.error(f"Error retrieving Grad image. Status code: {response.status_code}")
 
 
 # Function to scan the image
@@ -84,7 +83,7 @@ def scan_image(image):
     files = {"file": ("image.png", image_bytes, "image/png")}
 
     # Make a POST request to FastAPI
-    fastapi_url = "http://localhost:8000/organ_detection_model"
+    fastapi_url = "https://aimaging11-uz7skuvrea-ew.a.run.app/organ_detection_model"
     response = requests.post(fastapi_url, files=files)
 
     # Display the prediction

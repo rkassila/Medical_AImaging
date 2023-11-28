@@ -1,63 +1,161 @@
 import streamlit as st
 from PIL import Image
-from streamlit_option_menu import option_menu
-import about, home, result
+import requests
+import tempfile
+import io
 
 st.set_page_config(
-    page_title="Organ Disease Detector 🔍"
-    )
+    page_title="Organ Disease Detector :mag:"
+)
 
-class MultiApp:
-    def __init__(self):
-        self.apps = []
+# Add custom CSS to increase button size
+st.markdown(
+    """
+    <style>
+        .scan-button {
+            font-size: 50px;
+            padding: 20px;
+        }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
 
-    def add_app(self, title, function):
-        self.apps.append({
-            "title": title,
-            "function": function
-        })
+def app():
+    # Set title alignment and size
+    st.title("Organ Disease Detector :mag:")
 
-    def run(self):
-        st.markdown(
-            """
-            <style>
-                body {
-                    background-color: black;
-                }
-            </style>
-            """,
-            unsafe_allow_html=True)
 
-        with st.sidebar:
-            app = option_menu(
-                menu_title="Disease detector ",
-                options=["Home", "Result", "About"],
-                icons=["house", "list-task", "info-circle-fill"],
-                menu_icon="clipboard-pulse",
-                default_index=0,
-                styles={"container": {"padding": "5!important", "background-color": 'black'},
-                        "icon": {"color": "white", "font-size": "23px"},
-                        "menu-title": {"color": "white", "font-size": "25px", "margin": "0px", "background-color": "black",
-                                       "font-weight": "bold"},
-                        "nav-link": {"color": "white", "font-size": "20px", "text-align": "left", "margin": "0px",
-                                     "--hover-color": "#996500"},
-                        "nav-link-selected": {"background-color": "#910a0a"}, }
+    uploaded_image = st.file_uploader("Upload an image of your organ", type=["jpg", "jpeg", "png"])
+    if uploaded_image is not None:
+
+        # Display the uploaded image
+        image = Image.open(uploaded_image)
+        image = image.resize((224, 224))
+        st.image(image, caption="Uploaded Image", use_column_width=True)
+
+        # Button to trigger the scanning process
+        col1, col2, col3 = st.columns([1, 2, 1])
+        with col2:
+            scan_button = st.button(
+                "<div class='scan-button'>Scan</div>",
+                key="scan_button",
+                help="Click to initiate the scan.",
+                on_click=scan_image,
+                key="scan_button",
+                unsafe_allow_html=True
             )
 
-        if app == "Home":
-            home.app()
-            # Check if the scanning process has been initiated
-            if st.session_state.get('scan_button_clicked', False):
-                # Automatically switch to the Result page
-                result.app()
 
-        if app == "Result":
-            result.app()
-        if app == "About":
-            about.app()
+        if scan_button:
 
-app_runner = MultiApp()
-app_runner.add_app("Home", home.app)
-app_runner.add_app("Result", result.app)
-app_runner.add_app("About", about.app)
-app_runner.run()
+            # Perform the scanning process here
+            result = scan_image(image)
+
+            # Display the result
+            if result is not None:
+
+                # Display the prediction details
+                st.write("# Analysis Result:")
+                st.write(f"<p style='font-size: 30px;'>・Organ: {result.get('Organ', 'N/A')}</p>", unsafe_allow_html=True)
+                st.write(f"<p style='font-size: 30px;'>・Disease Status: {result.get('Disease Status', 'N/A')}</p>", unsafe_allow_html=True)
+
+                # Display the Class Prediction
+                class_prediction = result.get('Class Prediction', [])
+                if class_prediction:
+                    st.write("# Class Predictions:")
+
+                    # Sort class predictions by percentage in descending order
+                    sorted_predictions = sorted(zip(get_class_names(result['Organ']), class_prediction[0]), key=lambda x: x[1], reverse=True)
+
+                    # Display only the top 3 classes
+                    for i, (class_name, percentage) in enumerate(sorted_predictions[:3]):
+                        if i == 0:
+                            # Increase font size for the first class
+                            st.write(f"<p style='font-size:40px;'>{class_name}: {percentage * 100:.2f}%</p>", unsafe_allow_html=True, key=f"class_{i}")
+                        else:
+                            st.write(f"<p style='font-size: 30px;'>{class_name}: {percentage * 100:.2f}%</p>", unsafe_allow_html=True, key=f"class_{i}")
+
+                # Display the SHAP image
+                st.write("# Display SHAP Image:")
+                shap_url = "http://localhost:8000/shap-image"
+                response = requests.get(shap_url)
+                if response.status_code == 200:
+                    try:
+                        # Convert binary image data to BytesIO
+                        image_bytes = io.BytesIO(response.content)
+
+                        # Attempt to open the image
+                        shap_image = Image.open(image_bytes)
+                        st.image(shap_image, caption="SHAP Image", use_column_width=True)
+                    except Exception as e:
+                        st.error(f"Error opening SHAP image: {e}")
+                else:
+                    st.error(f"Error retrieving SHAP image. Status code: {response.status_code}")
+
+                # Display the Grad image
+                st.write("# Display GradCAM Image:")
+                grad_url = "http://localhost:8000/grad-image"
+                response = requests.get(grad_url)
+                if response.status_code == 200:
+                    try:
+                        # Convert binary image data to BytesIO
+                        image_bytes = io.BytesIO(response.content)
+
+                        # Attempt to open the image
+                        grad_image = Image.open(image_bytes)
+                        st.image(grad_image, caption="Grad Image", use_column_width=True)
+                    except Exception as e:
+                        st.error(f"Error opening Grad image: {e}")
+
+st.markdown("<style>body {font-size: 40px;}</style>", unsafe_allow_html=True)
+# Function to scan the image
+def scan_image(image):
+
+    # Save the image to a temporary file
+    with tempfile.NamedTemporaryFile(suffix=".png") as temp_file:
+        image.save(temp_file.name)
+
+        # Read the temporary file contents as bytes
+        image_bytes = temp_file.read()
+
+    # Prepare the file for sending it to FastAPI
+    files = {"file": ("image.png", image_bytes, "image/png")}
+
+    # Make a POST request to FastAPI
+    fastapi_url = "http://localhost:8000/organ_detection_model"
+    response = requests.post(fastapi_url, files=files)
+
+    # Display the prediction
+    if response.status_code == 200:
+        result = response.json()
+        organ = result.get('organ')
+        disease_status = result.get('disease_status')
+        class_prediction = result.get('class_prediction')
+
+        # Return structured information
+        return {
+            'Organ': organ,
+            'Disease Status': disease_status,
+            'Class Prediction': class_prediction
+        }
+    else:
+        st.error("Error making prediction. Please try again.")
+
+# Function to get class names based on the organ
+def get_class_names(organ):
+    class_names = {
+        "knee": ['Soft Fluid', 'Anterior Cruciate Ligament Injury', 'Bone Inflammation', 'Chondral Injury', 'Fracture',
+                 'Intra-articular Pathology', 'Meniscal Injury',  'Patellar Injury', 'Posterior Cruciate Ligament Injury'],
+        "brain": ['Acute Infarction', 'Chronic Infarction', 'Extra-axial Pathology', 'Focal Flair Hyperintensity',
+                  'Intra-brain Pathology', 'White Matter Changes'],
+        "shoulder": ['Acromioclavicular Joint Osteoarthritis', 'Biceps Pathology', 'Glenohumeral Joint Osteoarthritis',
+                     'Labral Pathology', 'Marrow Inflammation', 'Osseous Lesion','Post-operative Changes', 'Soft Tissue Edema',
+                     'Soft Tissue Fluid in Shoulder', 'Supraspinatus Pathology'],
+        "spine": ['Cord Pathology', 'Cystic Lesions', 'Disc Pathology', 'Osseous Abnormalities'],
+        "lung": [ 'Airspace Opacity', 'Bronchiectasis', 'Nodule', 'Parenchyma Destruction', 'Interstitial Lung Disease']
+    }
+    return class_names.get(organ, [])  # Return an empty list if organ is not found
+
+if __name__ == "__main__":
+    app()
