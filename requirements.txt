@@ -6,7 +6,6 @@ tensorflow==2.13.0
 google-cloud-bigquery
 google-cloud-storage
 pyarrow
-opencv-python
 mlflow==2.1.1
 matplotlib
 fastapi
@@ -23,3 +22,5 @@ python-multipart
 streamlit_option_menu
 pillow
 shap
+opencv-python
+mesa

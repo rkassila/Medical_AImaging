@@ -8,6 +8,7 @@ import tensorflow as tf
 from aimaging.api.grad_cam import plot_gradcam
 from aimaging.api.shap import generate_shap_image
 from fastapi.responses import Response
+import gc
 
 
 app = FastAPI()
@@ -63,13 +64,21 @@ async def predict_organ(file: UploadFile = File(...)):
                                 'parenchyma_destruction', 'interstitial_lung_disease']
 
             grad_image = plot_gradcam(class_model, img_array, layer_name='conv2_block1_3_bn')
+            app.state.grad_image = grad_image
+            del class_model
+            del disease_model
+
+            gc.collect()
 
         else:
             disease_status = 'healthy'
             class_prediction = None
 
         app.state.shap_image = shap_image
-        app.state.grad_image = grad_image
+
+
+
+
         return {
             'organ': organ,
             'disease_status': disease_status,

@@ -2,12 +2,14 @@ FROM python:3.10.6-buster
 
 WORKDIR /app
 
-COPY models/organ_detection_model.h5 /app/models/organ_detection_model.h5
+COPY models/ /app/models/
 COPY requirements.txt /app/requirements.txt
-COPY aimaging/ /app/aimaging/
 
 RUN pip install --upgrade pip
 RUN pip install -r /app/requirements.txt
+RUN apt-get update && apt-get install ffmpeg libsm6 libxext6  -y
+
+COPY aimaging/ /app/aimaging/
 
 COPY .env /app/.env
 

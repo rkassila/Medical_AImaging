@@ -1,9 +1,8 @@
 import shap
 import numpy as np
 import matplotlib.pyplot as plt
-from PIL import Image
 from io import BytesIO
-from fastapi.responses import Response
+
 
 
 def generateshap(image, model):
@@ -25,7 +24,7 @@ def generate_shap_image(image, model):
 
     image = np.squeeze(image, axis=0)
 
-    class_names = ['lung', 'brain', 'shoulder', 'knee', 'spine']
+    class_names = ['knee', 'brain', 'shoulder', 'spine', 'lung']
 
     masker = shap.maskers.Image("blur(128,128)", shape=image.shape)
 
@@ -42,12 +41,7 @@ def generate_shap_image(image, model):
     # Convert the plot to bytes
     buf = BytesIO()
     plt.savefig(buf, format='png')
-<<<<<<< HEAD
-    #buf.seek(0)
-
-=======
     buf.seek(0)
->>>>>>> dbae1b98be4fb456debe8ca0d815c502d2d754dc
     # Return the image as a StreamingResponse
     return buf.read()
 
