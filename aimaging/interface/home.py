@@ -3,6 +3,7 @@ from PIL import Image
 import requests
 import tempfile
 import io
+import time
 
 def app():
     # Set title alignment and size
@@ -27,6 +28,9 @@ def app():
         if st.button("Scan"):
             # Perform the scanning process here
             result = scan_image(image)
+            with st.spinner('Analyzing the picture...'):
+                time.sleep(25)
+                st.success('Done!')
 
             # Display the result
             if result is not None:
