@@ -8,7 +8,7 @@ st.set_page_config(
     page_title="Organ Disease Detector 🔍"
 )
 
-URL = "http://127.0.0.1:8000"
+URL = "https://aimaging18-uz7skuvrea-ew.a.run.app"
 
 def app():
     # Set title alignment and size
