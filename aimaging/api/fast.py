@@ -3,6 +3,7 @@ from PIL import Image
 from io import BytesIO
 import numpy as np
 import os
+import gc
 from tensorflow.keras.models import load_model
 import tensorflow as tf
 from aimaging.api.grad_cam import plot_gradcam
@@ -67,6 +68,11 @@ async def predict_organ(file: UploadFile = File(...)):
             grad_image2 = plot_gradcam(class_model, img_array, layer_name='conv2_block1_1_conv')
             app.state.grad_image2 = grad_image2
 
+            del class_model
+            del disease_model
+
+            gc.collect()
+
         else:
             disease_status = 'healthy'
             class_prediction = None
@@ -87,6 +93,7 @@ async def shap_image():
 @app.get("/grad-image")
 async def grad_image():
     return Response(app.state.grad_image, media_type="image/png")
+
 @app.get("/grad-image2")
 async def grad_image2():
-   return Response(app.state.grad_image2, media_type="image/png")
+    return Response(app.state.grad_image2, media_type="image/png")
