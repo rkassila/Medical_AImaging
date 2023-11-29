@@ -12,9 +12,12 @@ st.set_page_config(
 URL = "https://aimagingfinal-uz7skuvrea-ew.a.run.app"
 
 def app():
-    # Set title alignment and size
-    st.title("Organ Disease Detector")
-
+    # title image
+    title_col1, title_col2, title_col3= st.columns([1,1,1])
+    with title_col2:
+        title_image = Image.open('aimaging/interface/title_image.png')
+        title_image = title_image.resize((1696, 541))
+        st.image(title_image, use_column_width=True, width=550)
     # Read the image
     image = Image.open('aimaging/interface/streamlit_bg.png')
 
@@ -93,7 +96,7 @@ def app():
                             shap_image = Image.open(image_bytes)
                             # Crop the image to a specific size (adjust these values as needed)
                             shap_image_cropped = shap_image.crop((200, 100, 1648, 430))
-                            st.image(shap_image_cropped, caption="SHAP Image", use_column_width=True)
+                            st.image(shap_image_cropped, use_column_width=True)
                         except Exception as e:
                             st.error(f"Error opening SHAP image: {e}")
 
@@ -150,7 +153,7 @@ def app():
 
 
                     # Display the Grad images
-                    # st.divider()
+                    st.divider()
                     if disease_status.lower() == 'diseased':
                         st.write("## GradCAM")
 
