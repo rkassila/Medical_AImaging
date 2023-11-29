@@ -9,7 +9,7 @@ st.set_page_config(
     page_title="Organ Disease Detector"
 )
 
-URL = "https://aimaging18-uz7skuvrea-ew.a.run.app/"
+URL = "https://aimagingfinal-uz7skuvrea-ew.a.run.app"
 
 def app():
     # Set title alignment and size
@@ -25,12 +25,14 @@ def app():
 
     if uploaded_image is not None:
         # Display the uploaded image
-        image = Image.open(uploaded_image)
-        image = image.resize((224,224))
-        st.image(image, caption="Uploaded Image")
+        col1, col2, col3= st.columns([1,1,1])
+        with col2:
+            image = Image.open(uploaded_image)
+            image = image.resize((224, 224))
+            st.image(image, caption="Uploaded Image", width = 400)
 
         # Button to trigger the scanning process
-        col1, col2, col3 = st.columns([2,1,2])
+        col1, col2, col3 = st.columns([1,1,1])
         with col2:
             scan_button = st.button("SCAN", key="scan_button", help="Click to initiate the scan.", type = "primary", use_container_width=True)
 
