@@ -5,70 +5,63 @@ import tempfile
 import io
 
 st.set_page_config(
-    page_title="Organ Disease Detector :mag:"
-)
-
-# Add custom CSS to increase button size
-st.markdown(
-    """
-    <style>
-        .scan-button {
-            font-size: 50px;
-            padding: 20px;
-        }
-    </style>
-    """,
-    unsafe_allow_html=True
+    page_title="Organ Disease Detector 🔍"
 )
 
 def app():
     # Set title alignment and size
-    st.title("Organ Disease Detector :mag:")
+    st.title("Organ Disease Detector 🔍")
 
+    # Read the image
+    image = Image.open('aimaging/interface/streamlit_bg.png')
+
+    # Display the image with wide layout
+    st.image(image, use_column_width=True)
 
     uploaded_image = st.file_uploader("Upload an image of your organ", type=["jpg", "jpeg", "png"])
-    if uploaded_image is not None:
 
+    if uploaded_image is not None:
         # Display the uploaded image
         image = Image.open(uploaded_image)
         image = image.resize((224, 224))
         st.image(image, caption="Uploaded Image", use_column_width=True)
 
         # Button to trigger the scanning process
-        col1, col2, col3 = st.columns([1, 2, 1])
+        col1, col2, col3 = st.columns([1, 1, 1])
         with col2:
-            scan_button = st.button(
-                "<div class='scan-button'>Scan</div>",
-                key="scan_button",
-                help="Click to initiate the scan.",
-                on_click=scan_image,
-                key="scan_button",
-                unsafe_allow_html=True
-            )
+            scan_button = st.button("Scan",type="primary", key="scan_button", help="Click to initiate the scan.", use_container_width=True)
 
+        # Apply custom CSS to center the button
+        scan_button_style = (
+            "<style>"
+            ".stButton {display: flex; justify-content: center; align-items: center; font-size: 25px; padding: 15px;}"
+            "</style>"
+        )
+        st.markdown(scan_button_style, unsafe_allow_html=True)
 
         if scan_button:
+            # Create a loading spinner
+            with st.spinner("Scanning..."):
+                # Perform the scanning process here
+                result = scan_image(image)
 
-            # Perform the scanning process here
-            result = scan_image(image)
+                # Display the result
+                if result is not None:
+                    # Display the prediction details
+                    st.write("# Analysis Result:")
+                    st.write(f"<p style='font-size: 30px;'>・Organ: {result.get('Organ', 'N/A')}</p>", unsafe_allow_html=True)
+                    st.write(f"<p style='font-size: 30px;'>・Disease Status: {result.get('Disease Status', 'N/A')}</p>", unsafe_allow_html=True)
 
-            # Display the result
-            if result is not None:
+                    # Display the Class Prediction
+                    st.divider()
+                    class_prediction = result.get('Class Prediction', [])
+                    if class_prediction:
+                        st.write("## Class Predictions:")
 
-                # Display the prediction details
-                st.write("# Analysis Result:")
-                st.write(f"<p style='font-size: 30px;'>・Organ: {result.get('Organ', 'N/A')}</p>", unsafe_allow_html=True)
-                st.write(f"<p style='font-size: 30px;'>・Disease Status: {result.get('Disease Status', 'N/A')}</p>", unsafe_allow_html=True)
+                        # Sort class predictions by percentage in descending order
+                        sorted_predictions = sorted(zip(get_class_names(result['Organ']), class_prediction[0]), key=lambda x: x[1], reverse=True)
 
-                # Display the Class Prediction
-                class_prediction = result.get('Class Prediction', [])
-                if class_prediction:
-                    st.write("# Class Predictions:")
-
-                    # Sort class predictions by percentage in descending order
-                    sorted_predictions = sorted(zip(get_class_names(result['Organ']), class_prediction[0]), key=lambda x: x[1], reverse=True)
-
-                    # Display only the top 3 classes
+                        # Display only the top 3 classes
                     for i, (class_name, percentage) in enumerate(sorted_predictions[:3]):
                         if i == 0:
                             # Increase font size for the first class
@@ -76,42 +69,66 @@ def app():
                         else:
                             st.write(f"<p style='font-size: 30px;'>{class_name}: {percentage * 100:.2f}%</p>", unsafe_allow_html=True, key=f"class_{i}")
 
-                # Display the SHAP image
-                st.write("# Display SHAP Image:")
-                shap_url = "http://localhost:8000/shap-image"
-                response = requests.get(shap_url)
-                if response.status_code == 200:
-                    try:
-                        # Convert binary image data to BytesIO
-                        image_bytes = io.BytesIO(response.content)
+                    # Display the SHAP image
+                    st.divider()
+                    st.write("## Display SHAP Image:")
+                    shap_url = "http://127.0.0.1:8000/shap-image"
+                    response = requests.get(shap_url)
 
-                        # Attempt to open the image
-                        shap_image = Image.open(image_bytes)
-                        st.image(shap_image, caption="SHAP Image", use_column_width=True)
-                    except Exception as e:
-                        st.error(f"Error opening SHAP image: {e}")
-                else:
-                    st.error(f"Error retrieving SHAP image. Status code: {response.status_code}")
+                    if response.status_code == 200:
+                        try:
+                            # Convert binary image data to BytesIO
+                            image_bytes = io.BytesIO(response.content)
+                            # Attempt to open the image
+                            shap_image = Image.open(image_bytes)
+                            # Crop the image to a specific size (adjust these values as needed)
+                            shap_image_cropped = shap_image.crop((200, 100, 1648, 430))
+                            st.image(shap_image_cropped, caption="SHAP Image", use_column_width=True)
+                        except Exception as e:
+                            st.error(f"Error opening SHAP image: {e}")
 
-                # Display the Grad image
-                st.write("# Display GradCAM Image:")
-                grad_url = "http://localhost:8000/grad-image"
-                response = requests.get(grad_url)
-                if response.status_code == 200:
-                    try:
-                        # Convert binary image data to BytesIO
-                        image_bytes = io.BytesIO(response.content)
+        if scan_button:
 
-                        # Attempt to open the image
-                        grad_image = Image.open(image_bytes)
-                        st.image(grad_image, caption="Grad Image", use_column_width=True)
-                    except Exception as e:
-                        st.error(f"Error opening Grad image: {e}")
+                    # Display the Grad images
+                    st.divider()
+                    st.write("## Display GradCAM Images:")
 
-st.markdown("<style>body {font-size: 40px;}</style>", unsafe_allow_html=True)
+                    col1, col2 = st.columns(2)
+
+                    with col1:
+                        grad_url = "http://127.0.0.1:8000/grad-image"
+                        response = requests.get(grad_url)
+
+                        if response.status_code == 200:
+                            try:
+                                # Convert binary image data to BytesIO
+                                image_bytes = io.BytesIO(response.content)
+                                # Attempt to open the image
+                                grad_image = Image.open(image_bytes)
+                                # Crop the image to a specific size (adjust these values as needed)
+                                grad_image_cropped = grad_image.crop((150, 60, 500, 427))
+                                st.image(grad_image_cropped, caption="GradCAM Image 1", use_column_width=True)
+                            except Exception as e:
+                                st.error(f"Error opening Grad image: {e}")
+
+                    with col2:
+                        grad_url2 = "http://127.0.0.1:8000/grad-image2"
+                        response = requests.get(grad_url2)
+
+                        if response.status_code == 200:
+                            try:
+                                # Convert binary image data to BytesIO
+                                image_bytes = io.BytesIO(response.content)
+                                # Attempt to open the image
+                                grad_image = Image.open(image_bytes)
+                                # Crop the image to a specific size (adjust these values as needed)
+                                grad_image_cropped = grad_image.crop((150, 60, 500, 427))
+                                st.image(grad_image_cropped, caption="GradCAM Image 2", use_column_width=True)
+                            except Exception as e:
+                                st.error(f"Error opening Grad image: {e}")
+
 # Function to scan the image
 def scan_image(image):
-
     # Save the image to a temporary file
     with tempfile.NamedTemporaryFile(suffix=".png") as temp_file:
         image.save(temp_file.name)
@@ -123,7 +140,7 @@ def scan_image(image):
     files = {"file": ("image.png", image_bytes, "image/png")}
 
     # Make a POST request to FastAPI
-    fastapi_url = "http://localhost:8000/organ_detection_model"
+    fastapi_url = "http://127.0.0.1:8000/organ_detection_model"
     response = requests.post(fastapi_url, files=files)
 
     # Display the prediction

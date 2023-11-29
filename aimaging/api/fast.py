@@ -3,12 +3,12 @@ from PIL import Image
 from io import BytesIO
 import numpy as np
 import os
+import gc
 from tensorflow.keras.models import load_model
 import tensorflow as tf
 from aimaging.api.grad_cam import plot_gradcam
 from aimaging.api.shap import generate_shap_image
 from fastapi.responses import Response
-import gc
 
 
 app = FastAPI()
@@ -18,7 +18,7 @@ organ_detection_model = load_model(model_path)
 
 @app.get("/")
 def root():
-    return {'greeting': 'Hello'}
+    return {'greeting': 'Hello from here'}
 
 
 @app.post("/organ_detection_model")
@@ -63,8 +63,11 @@ async def predict_organ(file: UploadFile = File(...)):
                 class_labels = ['airspace_opacity', 'bronchiectasis', 'nodule',
                                 'parenchyma_destruction', 'interstitial_lung_disease']
 
-            grad_image = plot_gradcam(class_model, img_array, layer_name='conv2_block1_3_bn')
+            grad_image = plot_gradcam(class_model, img_array, layer_name='conv1_relu')
             app.state.grad_image = grad_image
+            grad_image2 = plot_gradcam(class_model, img_array, layer_name='conv2_block1_1_conv')
+            app.state.grad_image2 = grad_image2
+
             del class_model
             del disease_model
 
@@ -74,10 +77,8 @@ async def predict_organ(file: UploadFile = File(...)):
             disease_status = 'healthy'
             class_prediction = None
 
+
         app.state.shap_image = shap_image
-
-
-
 
         return {
             'organ': organ,
@@ -92,3 +93,7 @@ async def shap_image():
 @app.get("/grad-image")
 async def grad_image():
     return Response(app.state.grad_image, media_type="image/png")
+
+@app.get("/grad-image2")
+async def grad_image2():
+    return Response(app.state.grad_image2, media_type="image/png")
