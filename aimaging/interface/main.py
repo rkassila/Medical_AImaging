@@ -8,7 +8,7 @@ st.set_page_config(
     page_title="Organ Disease Detector 🔍"
 )
 
-URL = "https://aimaging18-uz7skuvrea-ew.a.run.app"
+URL = "http://127.0.0.1:8000"
 
 def app():
     # Set title alignment and size
@@ -29,17 +29,10 @@ def app():
         st.image(image, caption="Uploaded Image", use_column_width=True)
 
         # Button to trigger the scanning process
-        col1, col2, col3 = st.columns([1, 2, 1])
+        col1, col2, col3 = st.columns([2,1,2])
         with col2:
-            scan_button = st.button("Scan", key="scan_button", help="Click to initiate the scan.")
+            scan_button = st.button("SCAN", key="scan_button", help="Click to initiate the scan.", type = "primary", use_container_width=True)
 
-        # Apply custom CSS to center the button
-        scan_button_style = (
-            "<style>"
-            ".stButton {display: flex; justify-content: center; align-items: center; font-size: 20px; padding: 15px;}"
-            "</style>"
-        )
-        st.markdown(scan_button_style, unsafe_allow_html=True)
 
         if scan_button:
             # Create a loading spinner
@@ -54,26 +47,10 @@ def app():
                     st.write(f"<p style='font-size: 30px;'>・Organ: {result.get('Organ', 'N/A')}</p>", unsafe_allow_html=True)
                     st.write(f"<p style='font-size: 30px;'>・Disease Status: {result.get('Disease Status', 'N/A')}</p>", unsafe_allow_html=True)
 
-                    # Display the Class Prediction
-                    st.divider()
-                    class_prediction = result.get('Class Prediction', [])
-                    if class_prediction:
-                        st.write("## Class Predictions:")
-
-                        # Sort class predictions by percentage in descending order
-                        sorted_predictions = sorted(zip(get_class_names(result['Organ']), class_prediction[0]), key=lambda x: x[1], reverse=True)
-
-                        # Display only the top 3 classes
-                    for i, (class_name, percentage) in enumerate(sorted_predictions[:3]):
-                        if i == 0:
-                            # Increase font size for the first class
-                            st.write(f"<p style='font-size:40px;'>{class_name}: {percentage * 100:.2f}%</p>", unsafe_allow_html=True, key=f"class_{i}")
-                        else:
-                            st.write(f"<p style='font-size: 30px;'>{class_name}: {percentage * 100:.2f}%</p>", unsafe_allow_html=True, key=f"class_{i}")
 
                     # Display the SHAP image
-                    st.divider()
-                    st.write("## Display SHAP Image:")
+                    # st.divider()
+                    st.write("## SHAP :")
                     shap_url = URL + "/shap-image"
                     response = requests.get(shap_url)
 
@@ -90,9 +67,67 @@ def app():
                             st.error(f"Error opening SHAP image: {e}")
 
 
-                    # Display the Grad images
+
+                    # Display the Class Prediction
+                    # Display the Class Prediction
                     st.divider()
-                    st.write("## Display GradCAM Images:")
+                    class_prediction = result.get('Class Prediction', [])
+                    if class_prediction:
+                        st.write("## Class Predictions:")
+
+                        # Sort class predictions by percentage in descending order
+                        sorted_predictions = sorted(zip(get_class_names(result['Organ']), class_prediction[0]), key=lambda x: x[1], reverse=True)
+
+                        # Display a horizontal bar chart with the top 3 classes
+                        import matplotlib.pyplot as plt
+
+                        labels = [class_name for class_name, _ in sorted_predictions[:3]]
+                        percentages = [percentage * 100 for _, percentage in sorted_predictions[:3]]
+
+                        # Choose custom colors for each bar
+                        colors = ['#fc9b9b', '#e65555', '#e20000']
+
+                        # Set a transparent background for the entire figure
+                        fig, ax = plt.subplots(figsize=(13, 6))
+                        fig.patch.set_alpha(0.0)  # Set transparency
+
+                        bars = ax.barh(labels[::-1], percentages[::-1], color=colors)
+                        ax.set_xlabel('Percentage (%)', fontsize=24, color='white')  # Adjusted fontsize
+
+                        # Display the percentage values inside the bars
+                        for bar, percentage in zip(bars, percentages[::-1]):
+                            ax.text(bar.get_width(), bar.get_y() + bar.get_height() / 2, f'  {percentage:.2f}%',
+                                    va='center', ha='left', color='white', fontsize=24)  # Adjusted fontsize
+
+                        # Set axis label text color and fontsize to white
+                        ax.xaxis.label.set_color('white')
+                        ax.xaxis.label.set_fontsize(24)  # Adjusted fontsize
+                        ax.yaxis.label.set_color('white')
+                        ax.yaxis.label.set_fontsize(24)  # Adjusted fontsize
+
+                        # Set tick color and fontsize to white
+                        ax.tick_params(axis='x', colors='white', labelsize=20)  # Adjusted fontsize
+                        ax.tick_params(axis='y', colors='white', labelsize=20)  # Adjusted fontsize
+
+                        # Set individual background color for the axis
+                        ax.set_facecolor('black')
+
+                        # Ensure that the class names are visible
+                        for label in ax.get_yticklabels():
+                            label.set_color('white')
+                            label.set_fontsize(24)  # Adjusted fontsize
+
+                        # Display the bar chart using streamlit
+                        st.pyplot(fig)
+
+
+
+
+
+
+                    # Display the Grad images
+                    # st.divider()
+                    st.write("## GradCAM :")
 
                     col1, col2 = st.columns(2)
 
