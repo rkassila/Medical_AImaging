@@ -24,9 +24,9 @@ def generate_shap_image(image, model):
     shap.image_plot(shap_values, pixel_values=np.array([image]), show=False)
 
     # Set text color to white for title and axis labels
-    plt.title("SHAP Summary Plot", color='black')
-    plt.xlabel("SHAP Value", color='black')
-    plt.ylabel("Image Pixels", color='black')
+    # plt.title("SHAP Summary Plot", color='black')
+    # plt.xlabel("SHAP Value", color='black')
+    # plt.ylabel("Image Pixels", color='black')
 
     # Convert the plot to bytes
     buf = BytesIO()
