@@ -3,6 +3,7 @@ from PIL import Image
 import requests
 import tempfile
 import io
+import time
 
 st.set_page_config(
     page_title="Organ Disease Detector"
@@ -25,8 +26,8 @@ def app():
     if uploaded_image is not None:
         # Display the uploaded image
         image = Image.open(uploaded_image)
-        image = image.resize((224, 224))
-        st.image(image, caption="Uploaded Image", use_column_width=True)
+        image = image.resize((224,224))
+        st.image(image, caption="Uploaded Image")
 
         # Button to trigger the scanning process
         col1, col2, col3 = st.columns([2,1,2])
@@ -36,10 +37,17 @@ def app():
 
         if scan_button:
             # Create a loading spinner
-            with st.spinner("Scanning..."):
+            with st.status("Loading Image...", expanded=True) as status:
+                st.write("Classifying Organ...")
+                time.sleep(5)
+                st.write("Testing for Diseases...")
+                time.sleep(5)
+                st.write("Generating Images...")
+                time.sleep(5)
+
                 # Perform the scanning process here
                 result = scan_image(image)
-
+                status.update(label="Evaluation  Complete!", state="complete", expanded=True)
                 # Display the result
                 if result is not None:
                     # Display the prediction details
@@ -53,17 +61,22 @@ def app():
                         'lung':'🫁',
                         'shoulder':'🙋'
                     }
+                    disease_emoji = {
+                        'healthy':'✅',
+                        'diseased':'⚠️'
+                    }
                     new_col1, new_col2 = st.columns(2)
 
                     with new_col1:
-                        st.write(f"<p style='font-size: 40px; text-align: center;'>{organ.title()}</p>", unsafe_allow_html=True)
+                        st.write(f"<p style='font-size: 40px;font-weight: bold; text-align: center;'>{organ.title()}</p>", unsafe_allow_html=True)
                         st.write(f"<p style='font-size: 120px; text-align: center;'>{organ_emojis.get(organ, 'N/A')}</p>", unsafe_allow_html=True)
 
 
                     with new_col2:
                         color = 'red' if disease_status.lower() != 'healthy' else '#18db1b'
-                        st.write(f"<p style='font-size: 60px; color: {color}; text-align: center; font-weight: bold; display: flex; align-items: center; height: 30vh;'>{disease_status.title()}</p>", unsafe_allow_html=True)
 
+                        st.write(f"<p style='font-size: 40px; color: {color}; font-weight: bold; text-align: center;'>{disease_status.title()} </p>", unsafe_allow_html=True)
+                        st.write(f"<p style='font-size: 120px; text-align: center;'>{disease_emoji.get(disease_status, 'N/A')}</p>", unsafe_allow_html=True)
 
 
                     st.write("## SHAP")
@@ -134,47 +147,44 @@ def app():
                         st.pyplot(fig)
 
 
-
-
-
-
                     # Display the Grad images
                     # st.divider()
-                    st.write("## GradCAM")
+                    if disease_status.lower() == 'diseased':
+                        st.write("## GradCAM")
 
-                    col1, col2 = st.columns(2)
+                        col1, col2 = st.columns(2)
 
-                    with col1:
-                        grad_url = URL + "/grad-image"
-                        response = requests.get(grad_url)
+                        with col1:
+                            grad_url = URL + "/grad-image"
+                            response = requests.get(grad_url)
 
-                        if response.status_code == 200:
-                            try:
-                                # Convert binary image data to BytesIO
-                                image_bytes = io.BytesIO(response.content)
-                                # Attempt to open the image
-                                grad_image = Image.open(image_bytes)
-                                # Crop the image to a specific size (adjust these values as needed)
-                                grad_image_cropped = grad_image.crop((150, 60, 500, 427))
-                                st.image(grad_image_cropped, caption="GradCAM Image 1", use_column_width=True)
-                            except Exception as e:
-                                st.error(f"Error opening Grad image: {e}")
+                            if response.status_code == 200:
+                                try:
+                                    # Convert binary image data to BytesIO
+                                    image_bytes = io.BytesIO(response.content)
+                                    # Attempt to open the image
+                                    grad_image = Image.open(image_bytes)
+                                    # Crop the image to a specific size (adjust these values as needed)
+                                    grad_image_cropped = grad_image.crop((150, 60, 500, 427))
+                                    st.image(grad_image_cropped, use_column_width=True)
+                                except Exception as e:
+                                    st.error(f"Error opening Grad image: {e}")
 
-                    with col2:
-                        grad_url2 = URL + "/grad-image2"
-                        response = requests.get(grad_url2)
+                        with col2:
+                            grad_url2 = URL + "/grad-image2"
+                            response = requests.get(grad_url2)
 
-                        if response.status_code == 200:
-                            try:
-                                # Convert binary image data to BytesIO
-                                image_bytes = io.BytesIO(response.content)
-                                # Attempt to open the image
-                                grad_image = Image.open(image_bytes)
-                                # Crop the image to a specific size (adjust these values as needed)
-                                grad_image_cropped = grad_image.crop((150, 60, 500, 427))
-                                st.image(grad_image_cropped, caption="GradCAM Image 2", use_column_width=True)
-                            except Exception as e:
-                                st.error(f"Error opening Grad image: {e}")
+                            if response.status_code == 200:
+                                try:
+                                    # Convert binary image data to BytesIO
+                                    image_bytes = io.BytesIO(response.content)
+                                    # Attempt to open the image
+                                    grad_image = Image.open(image_bytes)
+                                    # Crop the image to a specific size (adjust these values as needed)
+                                    grad_image_cropped = grad_image.crop((150, 60, 500, 427))
+                                    st.image(grad_image_cropped, use_column_width=True)
+                                except Exception as e:
+                                    st.error(f"Error opening Grad image: {e}")
 
 # Function to scan the image
 def scan_image(image):
