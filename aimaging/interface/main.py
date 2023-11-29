@@ -5,14 +5,14 @@ import tempfile
 import io
 
 st.set_page_config(
-    page_title="Organ Disease Detector 🔍"
+    page_title="Organ Disease Detector"
 )
 
-URL = "http://127.0.0.1:8000"
+URL = "https://aimaging18-uz7skuvrea-ew.a.run.app/"
 
 def app():
     # Set title alignment and size
-    st.title("Organ Disease Detector 🔍")
+    st.title("Organ Disease Detector")
 
     # Read the image
     image = Image.open('aimaging/interface/streamlit_bg.png')
@@ -43,14 +43,30 @@ def app():
                 # Display the result
                 if result is not None:
                     # Display the prediction details
-                    st.write("# Analysis Result:")
-                    st.write(f"<p style='font-size: 30px;'>・Organ: {result.get('Organ', 'N/A')}</p>", unsafe_allow_html=True)
-                    st.write(f"<p style='font-size: 30px;'>・Disease Status: {result.get('Disease Status', 'N/A')}</p>", unsafe_allow_html=True)
+                    st.write("# Analysis Result")
+                    organ = result.get('Organ', 'N/A')
+                    disease_status = result.get('Disease Status', 'N/A')
+                    organ_emojis = {
+                        'brain':'🧠',
+                        'spine':'🩻',
+                        'knee':'🦵',
+                        'lung':'🫁',
+                        'shoulder':'🙋'
+                    }
+                    new_col1, new_col2 = st.columns(2)
+
+                    with new_col1:
+                        st.write(f"<p style='font-size: 40px; text-align: center;'>{organ.title()}</p>", unsafe_allow_html=True)
+                        st.write(f"<p style='font-size: 120px; text-align: center;'>{organ_emojis.get(organ, 'N/A')}</p>", unsafe_allow_html=True)
 
 
-                    # Display the SHAP image
-                    # st.divider()
-                    st.write("## SHAP :")
+                    with new_col2:
+                        color = 'red' if disease_status.lower() != 'healthy' else '#18db1b'
+                        st.write(f"<p style='font-size: 60px; color: {color}; text-align: center; font-weight: bold; display: flex; align-items: center; height: 30vh;'>{disease_status.title()}</p>", unsafe_allow_html=True)
+
+
+
+                    st.write("## SHAP")
                     shap_url = URL + "/shap-image"
                     response = requests.get(shap_url)
 
@@ -68,12 +84,10 @@ def app():
 
 
 
-                    # Display the Class Prediction
-                    # Display the Class Prediction
                     st.divider()
                     class_prediction = result.get('Class Prediction', [])
                     if class_prediction:
-                        st.write("## Class Predictions:")
+                        st.write("## Class Predictions")
 
                         # Sort class predictions by percentage in descending order
                         sorted_predictions = sorted(zip(get_class_names(result['Organ']), class_prediction[0]), key=lambda x: x[1], reverse=True)
@@ -92,7 +106,6 @@ def app():
                         fig.patch.set_alpha(0.0)  # Set transparency
 
                         bars = ax.barh(labels[::-1], percentages[::-1], color=colors)
-                        ax.set_xlabel('Percentage (%)', fontsize=24, color='white')  # Adjusted fontsize
 
                         # Display the percentage values inside the bars
                         for bar, percentage in zip(bars, percentages[::-1]):
@@ -127,7 +140,7 @@ def app():
 
                     # Display the Grad images
                     # st.divider()
-                    st.write("## GradCAM :")
+                    st.write("## GradCAM")
 
                     col1, col2 = st.columns(2)
 
