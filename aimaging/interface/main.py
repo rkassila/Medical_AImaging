@@ -6,7 +6,8 @@ import io
 import time
 
 st.set_page_config(
-    page_title="Organ Disease Detector"
+    page_title="Organ Disease Detector",
+    layout='wide'
 )
 
 URL = "https://aimagingr-uz7skuvrea-ew.a.run.app"
@@ -42,19 +43,22 @@ def app():
 
 
         if scan_button:
-            # Create a loading spinner
-            with st.status("Processing Image...", expanded=True) as status:
-                st.write("Classifying Organ...")
-                time.sleep(3)
-                st.write("Testing for Diseases...")
-                time.sleep(3)
-                st.write("Generating Images...")
-                time.sleep(3)
+            # Create a loading bar
+            bar_1 = st.progress(0, text="Processing Images...")
+            for percent_complete in range(100):
+                time.sleep(0.001)
+                bar_1.progress(percent_complete + 1, "Processing Images...")
+                time.sleep(0.001)
+            bar_2 = st.progress(0, text="Classifying Organ...")
+            for percent_complete in range(100):
+                time.sleep(0.001)
+                bar_2.progress(percent_complete + 1, "Classifying Organ...")
+                time.sleep(0.001)
 
-                # Perform the scanning process here
+            # Perform the scanning process here
+            with st.expander("Analysis Result"):
                 result = scan_image(image)
-                status.update(label="Evaluation Complete!", state="complete", expanded=True)
-                # Display the result
+
                 if result is not None:
                     # Display the prediction details
                     st.write("# Analysis Result")
@@ -102,11 +106,18 @@ def app():
                             st.error(f"Error opening SHAP image: {e}")
 
 
-
-                    st.divider()
+            if disease_status.lower() == 'diseased':
+                bar_3 = st.progress(0, text="Testing for Diseases...")
+                for percent_complete in range(100):
+                    time.sleep(0.05)
+                    bar_3.progress(percent_complete + 1, "Testing for Diseases...")
+                    time.sleep(0.05)
+                with st.expander("Disease Detection"):
                     class_prediction = result.get('Class Prediction', [])
+
+
                     if class_prediction:
-                        st.write("## Class Predictions")
+                        st.write("## Diagnosis")
 
                         # Sort class predictions by percentage in descending order
                         sorted_predictions = sorted(zip(get_class_names(result['Organ']), class_prediction[0]), key=lambda x: x[1], reverse=True)
@@ -156,6 +167,8 @@ def app():
                     # Display the Grad images
                     st.divider()
 
+
+
                     if disease_status.lower() == 'diseased':
                         st.write("## Disease Detection")
 
@@ -192,6 +205,8 @@ def app():
                                     st.image(grad_image_cropped, use_column_width=True)
                                 except Exception as e:
                                     st.error(f"Error opening Grad image: {e}")
+
+
     end_time = time.time()
     elapsed_time = end_time - start_time
     print(f"Elapsed Time: {elapsed_time} seconds")
