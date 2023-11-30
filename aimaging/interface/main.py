@@ -9,17 +9,18 @@ st.set_page_config(
     page_title="Organ Disease Detector"
 )
 
-URL = "https://aimagingfinal-uz7skuvrea-ew.a.run.app"
+URL = "https://aimagingr-uz7skuvrea-ew.a.run.app"
 
 def app():
     # title image
+    start_time = time.time()
     title_col1, title_col2, title_col3= st.columns([1,1,1])
     with title_col2:
-        title_image = Image.open('aimaging/interface/title_image.png')
+        title_image = Image.open('aimaging/interface/images/title_image.png')
         title_image = title_image.resize((1696, 541))
         st.image(title_image, use_column_width=True, width=550)
     # Read the image
-    image = Image.open('aimaging/interface/streamlit_bg.png')
+    image = Image.open('aimaging/interface/images/streamlit_bg.png')
 
     # Display the image with wide layout
     st.image(image, use_column_width=True)
@@ -42,17 +43,17 @@ def app():
 
         if scan_button:
             # Create a loading spinner
-            with st.status("Loading Image...", expanded=True) as status:
+            with st.status("Processing Image...", expanded=True) as status:
                 st.write("Classifying Organ...")
-                time.sleep(5)
+                time.sleep(3)
                 st.write("Testing for Diseases...")
-                time.sleep(5)
+                time.sleep(3)
                 st.write("Generating Images...")
-                time.sleep(5)
+                time.sleep(3)
 
                 # Perform the scanning process here
                 result = scan_image(image)
-                status.update(label="Evaluation  Complete!", state="complete", expanded=True)
+                status.update(label="Evaluation Complete!", state="complete", expanded=True)
                 # Display the result
                 if result is not None:
                     # Display the prediction details
@@ -64,7 +65,7 @@ def app():
                         'spine':'🩻',
                         'knee':'🦵',
                         'lung':'🫁',
-                        'shoulder':'🙋'
+                        'shoulder':'💪'
                     }
                     disease_emoji = {
                         'healthy':'✅',
@@ -84,7 +85,7 @@ def app():
                         st.write(f"<p style='font-size: 120px; text-align: center;'>{disease_emoji.get(disease_status, 'N/A')}</p>", unsafe_allow_html=True)
 
 
-                    st.write("## SHAP")
+                    st.write("## Organ Detection")
                     shap_url = URL + "/shap-image"
                     response = requests.get(shap_url)
 
@@ -154,8 +155,9 @@ def app():
 
                     # Display the Grad images
                     st.divider()
+
                     if disease_status.lower() == 'diseased':
-                        st.write("## GradCAM")
+                        st.write("## Disease Detection")
 
                         col1, col2 = st.columns(2)
 
@@ -190,6 +192,12 @@ def app():
                                     st.image(grad_image_cropped, use_column_width=True)
                                 except Exception as e:
                                     st.error(f"Error opening Grad image: {e}")
+    end_time = time.time()
+    elapsed_time = end_time - start_time
+    print(f"Elapsed Time: {elapsed_time} seconds")
+
+
+
 
 # Function to scan the image
 def scan_image(image):
