@@ -117,7 +117,7 @@ def app():
 
 
                     if class_prediction:
-                        st.write("## Diagnosis")
+                        st.write("## Disease Estimation")
 
                         # Sort class predictions by percentage in descending order
                         sorted_predictions = sorted(zip(get_class_names(result['Organ']), class_prediction[0]), key=lambda x: x[1], reverse=True)
@@ -170,7 +170,7 @@ def app():
 
 
                     if disease_status.lower() == 'diseased':
-                        st.write("## Disease Detection")
+                        st.write("## AI Vision")
 
                         col1, col2 = st.columns(2)
 
