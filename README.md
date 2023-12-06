@@ -13,7 +13,7 @@
 
 # Medical AImaging
 
-_A Deep Learning based solution for MR & CT diseaseas detection._
+_A Deep Learning based solution for MR & CT diseases detection._
 
 </header>
 
