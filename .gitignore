@@ -3,3 +3,4 @@ data/
 .python-version
 
 models/
+__pycache__
