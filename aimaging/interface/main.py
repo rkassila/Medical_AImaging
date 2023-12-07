@@ -10,7 +10,7 @@ st.set_page_config(
     layout='wide'
 )
 
-URL = "https://aimagingr-uz7skuvrea-ew.a.run.app"
+URL = "http://127.0.0.1:8000"
 
 def app():
     # title image
