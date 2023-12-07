@@ -90,7 +90,7 @@ async def predict_organ(file: UploadFile = File(...)):
 async def shap_image():
     return Response(app.state.shap_image, media_type="image/png")
 
-@app.get("/grad-image")
+@app.get("/grad-image1")
 async def grad_image():
     return Response(app.state.grad_image, media_type="image/png")
 
