@@ -7,9 +7,8 @@
   Add your open source license, GitHub uses MIT license.
 -->
 
-<img src=[https://octodex.github.com/images/collabocats.jpg](https://github.com/rkassila/Medical_AImaging/blob/master/aimaging/interface/title_image.png](https://raw.githubusercontent.com/rkassila/Medical_AImaging/master/aimaging/interface/title_image.png) alt="Medical AImaging" width=300 align=right>
 
-
+<img src="https://raw.githubusercontent.com/rkassila/Medical_AImaging/master/aimaging/interface/title_image.png" alt="Medical AImaging" width="1280" align="right">
 
 # Medical AImaging
 
