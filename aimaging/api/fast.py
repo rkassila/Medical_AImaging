@@ -68,8 +68,8 @@ async def predict_organ(file: UploadFile = File(...)):
             grad_image2 = plot_gradcam(class_model, img_array, layer_name='conv2_block1_1_conv')
             app.state.grad_image2 = grad_image2
 
-            del class_model
-            del disease_model
+            #del class_model
+            #del disease_model
 
             gc.collect()
 
