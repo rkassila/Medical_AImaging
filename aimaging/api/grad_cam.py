@@ -33,7 +33,7 @@ def plot_gradcam(model, img_array, layer_name):
     plt.title(f'GradCAM ({layer_name})', color='black')
 
     buf = BytesIO()
-    plt.savefig(buf, format='png', facecolor='white')  # Save with black background
+    plt.savefig(buf, format='png', facecolor='white')  # Save with white background
     buf.seek(0)
 
 
