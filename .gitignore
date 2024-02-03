@@ -17,3 +17,6 @@ aimaging/api/__pycache__
 aimaging/interface/__pycache__
 
 requirements_prod.txt
+
+notebooks/.ipynb_checkpoints
+notebooks
