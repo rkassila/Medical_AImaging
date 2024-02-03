@@ -8,7 +8,7 @@
 -->
 
 
-<img src="https://raw.githubusercontent.com/rkassila/Medical_AImaging/master/aimaging/interface/title_image.png" alt="Medical AImaging" width="1280" align="right">
+<img src="https://raw.githubusercontent.com/rkassila/Medical_AImaging/master/aimaging/interface/images/title_image.png" alt="Medical AImaging" width="1280" align="right">
 
 # Medical AImaging
 
