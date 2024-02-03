@@ -12,3 +12,8 @@ louis_code
 wais_interface
 
 Presentation
+
+aimaging/api/__pycache__
+aimaging/interface/__pycache__
+
+requirements_prod.txt

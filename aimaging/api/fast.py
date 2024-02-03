@@ -46,22 +46,22 @@ async def predict_organ(file: UploadFile = File(...)):
             class_prediction = class_model.predict(img_array).tolist()
             disease_status = 'diseased'
 
-            if organ == 'knee':
-                class_labels = [ 'soft_fluid', 'acl', 'bone_inf', 'chondral',
-                                'fracture', 'intra', 'meniscal', 'patella', 'pcl']
-            elif organ == 'brain':
-                class_labels = ['acute_infarct', 'chronic_infarct', 'extra',
-                                'focal_flair_hyper', 'intra_brain', 'white_matter_changes']
-            elif organ == 'shoulder':
-                class_labels= ['acj_oa', 'biceps_pathology', 'ghj_oa', 'labral_pathology',
-                            'marrow_inflammation', 'osseous_lesion', 'post_op',
-                            'soft_tissue_edema', 'soft_tissue_fluid_shoulder', 'supraspinatus_pathology']
-            elif organ == 'spine':
-                class_labels=['cord_pathology', 'cystic_lesions', 'disc_pathology', 'osseous_abn']
+            # if organ == 'knee':
+            #     class_labels = [ 'soft_fluid', 'acl', 'bone_inf', 'chondral',
+            #                     'fracture', 'intra', 'meniscal', 'patella', 'pcl']
+            # elif organ == 'brain':
+            #     class_labels = ['acute_infarct', 'chronic_infarct', 'extra',
+            #                     'focal_flair_hyper', 'intra_brain', 'white_matter_changes']
+            # elif organ == 'shoulder':
+            #     class_labels= ['acj_oa', 'biceps_pathology', 'ghj_oa', 'labral_pathology',
+            #                 'marrow_inflammation', 'osseous_lesion', 'post_op',
+            #                 'soft_tissue_edema', 'soft_tissue_fluid_shoulder', 'supraspinatus_pathology']
+            # elif organ == 'spine':
+            #     class_labels=['cord_pathology', 'cystic_lesions', 'disc_pathology', 'osseous_abn']
 
-            elif organ == 'lung':
-                class_labels = ['airspace_opacity', 'bronchiectasis', 'nodule',
-                                'parenchyma_destruction', 'interstitial_lung_disease']
+            # elif organ == 'lung':
+            #     class_labels = ['airspace_opacity', 'bronchiectasis', 'nodule',
+            #                     'parenchyma_destruction', 'interstitial_lung_disease']
 
             grad_image = plot_gradcam(class_model, img_array, layer_name='conv1_relu')
             app.state.grad_image = grad_image
