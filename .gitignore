@@ -20,3 +20,17 @@ requirements_prod.txt
 
 notebooks/.ipynb_checkpoints
 notebooks
+
+models/organ_detection_model.h5
+
+models/knee_bin_model.h5
+models/brain_bin_model.h5
+models/lung_bin_model.h5
+models/shoulder_bin_model.h5
+models/spine_bin_model.h5
+
+models/knee_class_model.h5
+models/brain_class_model.h5
+models/lung_class_model.h5
+models/shoulder_class_model.h5
+models/spine_class_model.h5
