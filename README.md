@@ -32,5 +32,19 @@ Medical AIMaging was our Le Wagon bootcamp project focused on detecting 36 disea
 
 - **Streamlit:** Chosen for deployment, providing a user-friendly interface and facilitating a smooth deployment process.
 
+---
+## Images
+
+<table>
+  <tr>
+    <td align="top"><img src="https://raw.githubusercontent.com/rkassila/Medical_AImaging/master/aimaging/interface/images/shap_image.png" alt="Shap" width="500"></td>
+    <td align="top"><img src="https://raw.githubusercontent.com/rkassila/Medical_AImaging/master/aimaging/interface/images/ai_vision.png" alt="AI Vision" width="500"></td>
+  </tr>
+  <tr>
+    <td align="center">Organ Detection</td>
+    <td align="center">Disease Detection</td>
+  </tr>
+</table>
+
 <footer>
 </footer>
