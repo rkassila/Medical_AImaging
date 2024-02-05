@@ -97,3 +97,12 @@ async def grad_image():
 @app.get("/grad-image2")
 async def grad_image2():
     return Response(app.state.grad_image2, media_type="image/png")
+
+
+##Setting things to work locally
+def main():
+    import uvicorn
+    uvicorn.run(app, host="127.0.0.1", port=8000)
+
+if __name__ == "__main__":
+    main()

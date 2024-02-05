@@ -34,3 +34,5 @@ models/brain_class_model.h5
 models/lung_class_model.h5
 models/shoulder_class_model.h5
 models/spine_class_model.h5
+
+aimaging.egg-info/
