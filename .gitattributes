@@ -2,4 +2,4 @@
 
 notebooks/Model_training_and_GradCAM.ipynb linguist-vendored
 notebooks/Organ_detector_with_SHAP.ipynb linguist-vendored
-#notebooks/Transformer_vision_try.ipynb linguist-vendored
+notebooks/Transformer_vision_try.ipynb linguist-vendored
