@@ -31,12 +31,6 @@ Medical AIMaging was our Le Wagon bootcamp project focused on detecting 36 disea
 - **FastAPI:** Independently incorporated to optimize functionality and enhance overall application performance.
 
 - **Streamlit:** Chosen for deployment, providing a user-friendly interface and facilitating a smooth deployment process.
-    
-
-### What's next?
-
-We will try to work on an improved version. This first one having been only done in 10 days.
-
 
 <footer>
 </footer>
