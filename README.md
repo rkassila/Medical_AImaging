@@ -19,6 +19,10 @@ _A specialized deep learning solution designed for the detection of diseases in 
 Trained on the [Rad Image Net dataset](https://www.radimagenet.com), this tool is an exploration into medical diagnostics using deep learning. 
 Medical AIMaging was our Le Wagon bootcamp project focused on detecting 36 diseases across 5 organs. 
 
+### Demo
+
+[Click here](https://youtu.be/I43Ln32OAMs?t=1076&si=Rjq8IJsQYe_u5sY1) to watch the demo.
+
 ---
 ### Built With
 
@@ -27,7 +31,7 @@ Medical AIMaging was our Le Wagon bootcamp project focused on detecting 36 disea
 - **FastAPI:** Independently incorporated to optimize functionality and enhance overall application performance.
 
 - **Streamlit:** Chosen for deployment, providing a user-friendly interface and facilitating a smooth deployment process.
-  
+    
 
 ### What's next?
 
