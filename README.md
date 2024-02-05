@@ -10,18 +10,24 @@
 
 <img src="https://raw.githubusercontent.com/rkassila/Medical_AImaging/master/aimaging/interface/images/title_image.png" alt="Medical AImaging" width="1280" align="right">
 
-# Medical AImaging
+# Medical AIMaging
 
-_A Deep Learning based solution for MR & CT diseases detection._
+_A specialized deep learning solution designed for the detection of diseases in Magnetic Resonance (MR) and Computed Tomography (CT) images, utilizing Convolutional Neural Networks (CNN)._
 
-</header>
+## Project Overview
 
-## Project
+Trained on the Rad Image Net dataset, this tool is an exploration into medical diagnostics using deep learning. 
+Medical AIMaging was our Le Wagon bootcamp project focused on detecting 36 diseases across 5 organs. 
 
-_Medical AIMaging is our Le Wagon bootcamp project_
+---
+### Built With
 
-The tool can detect 36 diseases in 5 organs. It has been trained on Rad Image Net dataset.
+- **Tensorflow:** Leveraged as a foundational framework for developing and implementing advanced CNNs.
 
+- **FastAPI:** Independently incorporated to optimize functionality and enhance overall application performance.
+
+- **Streamlit:** Chosen for deployment, providing a user-friendly interface and facilitating a smooth deployment process.
+  
 
 ### What's next?
 
