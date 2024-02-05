@@ -1,5 +1,5 @@
 # .gitattributes
 
-#notebooks/Model_training_and_GradCAM.ipynb linguist-vendored
-notebooks/Organ_detector with_SHAP.ipynb linguist-vendored
+notebooks/Model_training_and_GradCAM.ipynb linguist-vendored
+#notebooks/Organ_detector with_SHAP.ipynb linguist-vendored
 notebooks/Transformer_(vision)_try.ipynb linguist-vendored
