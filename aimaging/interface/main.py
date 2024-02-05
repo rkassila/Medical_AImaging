@@ -10,7 +10,11 @@ st.set_page_config(
     layout='wide'
 )
 
-URL = "https://aimagingr-uz7skuvrea-ew.a.run.app"
+#URL = "https://aimagingr-uz7skuvrea-ew.a.run.app"
+
+#Setting app to local API
+local_api_url = "http://127.0.0.1:8000"
+URL = local_api_url
 
 def app():
     # title image
@@ -262,5 +266,10 @@ def get_class_names(organ):
     }
     return class_names.get(organ, [])  # Return an empty list if organ is not found
 
-if __name__ == "__main__":
+
+#Setting to work in local
+def main():
     app()
+
+if __name__ == "__main__":
+    main()
