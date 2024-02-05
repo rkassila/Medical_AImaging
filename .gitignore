@@ -2,7 +2,6 @@ data/
 .DS_Store
 .python-version
 
-models/
 .env
 .env.yaml
 
@@ -19,7 +18,8 @@ aimaging/interface/__pycache__
 requirements_prod.txt
 
 notebooks/.ipynb_checkpoints
-notebooks
+notebooks/1V1_test
+notebooks/Research
 
 models/organ_detection_model.h5
 
