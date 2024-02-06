@@ -12,7 +12,7 @@
 
 # Medical AIMaging
 
-_A specialized deep learning solution designed for the detection of diseases in Magnetic Resonance (MR) and Computed Tomography (CT) images, utilizing Convolutional Neural Networks (CNN)._
+_A deep learning solution designed for the detection of diseases in Magnetic Resonance (MR) and Computed Tomography (CT) images, utilizing Convolutional Neural Networks (CNN)._
 
 ## Project Overview
 
