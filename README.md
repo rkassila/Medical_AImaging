@@ -17,7 +17,7 @@ _A deep learning solution designed for the detection of diseases in Magnetic Res
 ## Project Overview
 
 Trained on the [Rad Image Net dataset](https://www.radimagenet.com), this project is an exploration into medical diagnostics using deep learning. 
-Medical AIMaging was our Le Wagon bootcamp project focused on detecting 36 diseases across 5 organs. 
+Medical AImaging was our Le Wagon bootcamp project focused on detecting 36 diseases across 5 organs. 
 
 ### Demo
 
