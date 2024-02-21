@@ -23,6 +23,7 @@ notebooks/.ipynb_checkpoints
 notebooks/1V1_test
 notebooks/Research
 
+model/old/
 model/old
 
 models/knee_bin_model.h5
