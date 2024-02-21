@@ -7,7 +7,7 @@ import gc
 from tensorflow.keras.models import load_model
 import tensorflow as tf
 from aimaging.api.grad_cam import plot_gradcam
-from aimaging.api.shap import generate_shap_image
+from aimaging.api.shap_image import generate_shap_image
 from fastapi.responses import Response
 
 
@@ -35,37 +35,50 @@ async def predict_organ(file: UploadFile = File(...)):
         organ_names = ["knee", "brain", "shoulder", "spine", "lung"]
         organ = organ_names[predicted_organ_index]
 
-        model_path = os.path.join(os.getcwd(), 'models', f'../models/{organ}_bin_model.h5')
-        disease_model = load_model(model_path)
+        if organ == 'knee':
+            class_labels = ['normal', 'soft_fluid', 'acl', 'bone_inf', 'chondral', 'fracture', 'intra', 'meniscal', 'patella', 'pcl']
 
-        disease_prediction = disease_model.predict(img_array)[0][0]
+        elif organ == 'brain':
+            class_labels = ['normal','acute_infarct', 'chronic_infarct', 'extra',
+                         'focal_flair_hyper', 'intra_brain', 'white_matter_changes']
+
+        elif organ == 'shoulder':
+            class_labels= ['normal','acj_oa', 'biceps_pathology', 'ghj_oa', 'labral_pathology',
+                             'marrow_inflammation', 'osseous_lesion', 'post_op',
+                             'soft_tissue_edema', 'soft_tissue_fluid_shoulder', 'supraspinatus_pathology']
+
+        elif organ == 'spine':
+            class_labels=['normal','cord_pathology', 'cystic_lesions', 'disc_pathology', 'osseous_abn']
+
+        elif organ == 'lung':
+            class_labels = ['normal','airspace_opacity', 'bronchiectasis', 'nodule',
+                             'parenchyma_destruction', 'interstitial_lung_disease']
+
+
+        model_class_path = os.path.join(os.getcwd(), 'models', f'../models/{organ}_class_model_with_normal.h5')
+        disease_model = load_model(model_class_path)
+
+        gray_img_array = tf.image.rgb_to_grayscale(img_array)  # Convert to grayscale
+        disease_dict = disease_model.predict(gray_img_array).tolist()
+        disease_prediction = class_labels[np.argmax(disease_dict, axis=1)[0]]
+
+        is_healthy = 0
+
+        if disease_prediction != 'normal':
+            is_healthy = 1
+
+        #model_path = os.path.join(os.getcwd(), 'models', f'../models/{organ}_bin_model.h5')
+        #disease_model = load_model(model_path)
+
+        #disease_prediction = disease_model.predict(img_array)[0][0]
         shap_image = generate_shap_image(model = organ_detection_model, image=img_array)
-        if disease_prediction >= 0.5:
-            class_model_path = os.path.join(os.getcwd(), 'models', f'../models/{organ}_class_model.h5')
-            class_model = load_model(class_model_path)
-            class_prediction = class_model.predict(img_array).tolist()
+
+        if is_healthy >= 0.5:
             disease_status = 'diseased'
 
-            # if organ == 'knee':
-            #     class_labels = [ 'soft_fluid', 'acl', 'bone_inf', 'chondral',
-            #                     'fracture', 'intra', 'meniscal', 'patella', 'pcl']
-            # elif organ == 'brain':
-            #     class_labels = ['acute_infarct', 'chronic_infarct', 'extra',
-            #                     'focal_flair_hyper', 'intra_brain', 'white_matter_changes']
-            # elif organ == 'shoulder':
-            #     class_labels= ['acj_oa', 'biceps_pathology', 'ghj_oa', 'labral_pathology',
-            #                 'marrow_inflammation', 'osseous_lesion', 'post_op',
-            #                 'soft_tissue_edema', 'soft_tissue_fluid_shoulder', 'supraspinatus_pathology']
-            # elif organ == 'spine':
-            #     class_labels=['cord_pathology', 'cystic_lesions', 'disc_pathology', 'osseous_abn']
-
-            # elif organ == 'lung':
-            #     class_labels = ['airspace_opacity', 'bronchiectasis', 'nodule',
-            #                     'parenchyma_destruction', 'interstitial_lung_disease']
-
-            grad_image = plot_gradcam(class_model, img_array, layer_name='conv1_relu')
+            grad_image = plot_gradcam(disease_model, gray_img_array, layer_name='conv1')
             app.state.grad_image = grad_image
-            grad_image2 = plot_gradcam(class_model, img_array, layer_name='conv2_block1_1_conv')
+            grad_image2 = plot_gradcam(disease_model, gray_img_array, layer_name='conv2')
             app.state.grad_image2 = grad_image2
 
             #del class_model
@@ -75,7 +88,6 @@ async def predict_organ(file: UploadFile = File(...)):
 
         else:
             disease_status = 'healthy'
-            class_prediction = None
 
 
         app.state.shap_image = shap_image
@@ -83,7 +95,8 @@ async def predict_organ(file: UploadFile = File(...)):
         return {
             'organ': organ,
             'disease_status': disease_status,
-            'class_prediction':class_prediction}
+            'class_prediction':disease_dict,
+            'best_prediction':disease_prediction}
             #{'organ': organ, 'disease_status': 'healthy'}
 
 @app.get("/shap-image")

@@ -23,13 +23,15 @@ def plot_gradcam(model, img_array, layer_name):
 
     cam, _, _ = generate_gradcam(model, img_array, layer_name)
 
-    cam = (cam - np.min(cam)) / (np.max(cam) - np.min(cam))
+    epsilon = 1e-10  # Small epsilon value to prevent division by zero
+    cam_range = np.max(cam) - np.min(cam)
+    cam = (cam - np.min(cam)) / (cam_range + epsilon)
 
     plt.clf()
 
     plt.figure(facecolor='black')
-    #plt.imshow(img_array[0], alpha=0.8)
-    plt.imshow(cam, cmap='jet', alpha=0.5)
+    #plt.imshow(img_array[0], alpha=0.4)
+    plt.imshow(cam, cmap='jet', alpha=0.8)
     plt.title(f'GradCAM ({layer_name})', color='black')
 
     buf = BytesIO()
