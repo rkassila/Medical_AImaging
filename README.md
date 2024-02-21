@@ -49,7 +49,7 @@ Medical AImaging was our Le Wagon bootcamp project focused on detecting 36 disea
 --
 ## How to use ?
 <p>
-  <i>To be able to test the app, I've created small models : to be able to upload on GitHub, original models being > 2 Gb in total. Those small models performance is poor (46-70% accuracy) and don't perform with GradCAM (AI Vision). I will try to create intermediate versions in the future that will allow better performances and upload in GitHub while maintaining sufficient performance. Images displayed on this ReadMe have been made with original models.</i>
+  <i>To be able to test the app, I've created small models : to be able to upload on GitHub, original models being > 2 Gb in total. Those small models performance is poor (46-70% accuracy) and don't perform with GradCAM (AI Vision). I will try to create intermediate versions in the future that will allow better performances and upload in GitHub while maintaining sufficient performance. Normal detection is heavily impacted (see below change in model use). Images displayed on this ReadMe have been made with original models.</i>
 
 - Download the repository
 - In terminal : 'pip install -r requirements.txt'
@@ -57,6 +57,11 @@ Medical AImaging was our Le Wagon bootcamp project focused on detecting 36 disea
 - In terminal : 'streamlit run aimaging/interface/main.py' to start the interface and be able to test the app
 
 </p>
+
+<br/>
+
+<p><b>Original models : </b> Organ Classifier (99.9% accuracy) > Disease detection (90~99% accuracy) > Disease classifier (55~90% accuracy)</p>
+<p><b>Small models : </b> Organ Classifier (99.9% accuracy) > Disease classifier (46~70% accuracy)</p>
 
 <footer>
 </footer>
