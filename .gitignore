@@ -38,3 +38,5 @@ models/shoulder_class_model.h5
 models/spine_class_model.h5
 
 aimaging.egg-info/
+
+aimaging/api/shap
