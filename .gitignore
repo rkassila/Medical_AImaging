@@ -15,13 +15,15 @@ Presentation
 aimaging/api/__pycache__
 aimaging/interface/__pycache__
 
+aimaging/api/fast_old.py
+
 requirements_prod.txt
 
 notebooks/.ipynb_checkpoints
 notebooks/1V1_test
 notebooks/Research
 
-models/organ_detection_model.h5
+model/old
 
 models/knee_bin_model.h5
 models/brain_bin_model.h5
