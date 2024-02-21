@@ -113,9 +113,9 @@ def app():
             if disease_status.lower() == 'diseased':
                 bar_3 = st.progress(0, text="Testing for Diseases...")
                 for percent_complete in range(100):
-                    time.sleep(0.05)
+                    time.sleep(0.001)
                     bar_3.progress(percent_complete + 1, "Testing for Diseases...")
-                    time.sleep(0.05)
+                    time.sleep(0.001)
                 with st.expander("Disease Detection"):
                     class_prediction = result.get('Class Prediction', [])
 
@@ -254,15 +254,15 @@ def scan_image(image):
 # Function to get class names based on the organ
 def get_class_names(organ):
     class_names = {
-        "knee": ['Soft Fluid', 'Anterior Cruciate Ligament Injury', 'Bone Inflammation', 'Chondral Injury', 'Fracture',
+        "knee": ['Normal','Soft Fluid', 'Anterior Cruciate Ligament Injury', 'Bone Inflammation', 'Chondral Injury', 'Fracture',
                  'Intra-articular Pathology', 'Meniscal Injury',  'Patellar Injury', 'Posterior Cruciate Ligament Injury'],
-        "brain": ['Acute Infarction', 'Chronic Infarction', 'Extra-axial Pathology', 'Focal Flair Hyperintensity',
+        "brain": ['Normal','Acute Infarction', 'Chronic Infarction', 'Extra-axial Pathology', 'Focal Flair Hyperintensity',
                   'Intra-brain Pathology', 'White Matter Changes'],
-        "shoulder": ['Acromioclavicular Joint Osteoarthritis', 'Biceps Pathology', 'Glenohumeral Joint Osteoarthritis',
+        "shoulder": ['Normal','Acromioclavicular Joint Osteoarthritis', 'Biceps Pathology', 'Glenohumeral Joint Osteoarthritis',
                      'Labral Pathology', 'Marrow Inflammation', 'Osseous Lesion','Post-operative Changes', 'Soft Tissue Edema',
                      'Soft Tissue Fluid in Shoulder', 'Supraspinatus Pathology'],
-        "spine": ['Cord Pathology', 'Cystic Lesions', 'Disc Pathology', 'Osseous Abnormalities'],
-        "lung": [ 'Airspace Opacity', 'Bronchiectasis', 'Nodule', 'Parenchyma Destruction', 'Interstitial Lung Disease']
+        "spine": ['Normal','Cord Pathology', 'Cystic Lesions', 'Disc Pathology', 'Osseous Abnormalities'],
+        "lung": ['Normal','Airspace Opacity', 'Bronchiectasis', 'Nodule', 'Parenchyma Destruction', 'Interstitial Lung Disease']
     }
     return class_names.get(organ, [])  # Return an empty list if organ is not found
 
