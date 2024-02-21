@@ -6,7 +6,7 @@ with open("requirements.txt") as f:
 requirements = [x.strip() for x in content if "git+" not in x]
 
 setup(name='aimaging',
-      version="0.0.2",
+      version="0.1.0",
       description="AIMaging (api_pred)",
       author="AIMaging team @LeWagon Tokyo",
       install_requires=requirements,
