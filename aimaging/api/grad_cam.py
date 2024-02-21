@@ -31,7 +31,8 @@ def plot_gradcam(model, img_array, layer_name):
 
     plt.figure(facecolor='black')
     #plt.imshow(img_array[0], alpha=0.4)
-    plt.imshow(cam, cmap='jet', alpha=0.8)
+    #plt.imshow(cam, cmap='jet', alpha=0.8)
+    plt.imshow(cam, cmap='jet_r', alpha=0.8)
     plt.title(f'GradCAM ({layer_name})', color='black')
 
     buf = BytesIO()

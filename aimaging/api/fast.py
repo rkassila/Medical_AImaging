@@ -58,11 +58,20 @@ async def predict_organ(file: UploadFile = File(...)):
         model_class_path = os.path.join(os.getcwd(), 'models', f'../models/{organ}_class_model_with_normal.h5')
         disease_model = load_model(model_class_path)
 
-        gray_img_array = tf.image.rgb_to_grayscale(img_array)  # Convert to grayscale
+        # Convert RGB image to grayscale
+        gray_img_array = tf.image.rgb_to_grayscale(img_array)
+
+        # Cast grayscale image to float32
+        gray_img_array_float = tf.cast(gray_img_array, tf.float32)
+
+        # Normalize pixel values by dividing by 255
+        gray_img_array = tf.divide(gray_img_array_float, 255.0)
+
         disease_dict = disease_model.predict(gray_img_array).tolist()
         disease_prediction = class_labels[np.argmax(disease_dict, axis=1)[0]]
 
         is_healthy = 0
+
 
         if disease_prediction != 'normal':
             is_healthy = 1
@@ -76,9 +85,9 @@ async def predict_organ(file: UploadFile = File(...)):
         if is_healthy >= 0.5:
             disease_status = 'diseased'
 
-            grad_image = plot_gradcam(disease_model, gray_img_array, layer_name='conv1')
+            grad_image = plot_gradcam(disease_model, gray_img_array, layer_name='conv2')
             app.state.grad_image = grad_image
-            grad_image2 = plot_gradcam(disease_model, gray_img_array, layer_name='conv2')
+            grad_image2 = plot_gradcam(disease_model, gray_img_array, layer_name='conv3')
             app.state.grad_image2 = grad_image2
 
             #del class_model
