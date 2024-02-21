@@ -49,7 +49,8 @@ Medical AImaging was our Le Wagon bootcamp project focused on detecting 36 disea
 ---
 ## How to use ?
 <p>
-  <i>To be able to test the app, I've created small models : to be able to upload on GitHub, original models being > 2 Gb in total. Those small models performance is poor (46-70% accuracy) and don't perform with GradCAM (AI Vision). I will try to create intermediate versions in the future that will allow better performances and upload in GitHub while maintaining sufficient performance. Normal detection is heavily impacted (see below change in model use). Images displayed on this ReadMe have been made with original models.</i>
+  <i>To be able to test the app, I've created small models : original models being > 2 Gb in total (over GitHub limit). <br/>
+    Those small models accuracy (46-70%) is not as good as the original models (see below for explanations) but is offering sufficient performance considenring the reduction of size : original diseases classifiers were over 700Mb each + 200Mb for binary detection (diseased or not), small models are 2.5Mb for both usages.<br/> Images displayed on this ReadMe have been made with original models.</i>
 
 - Download the repository
 - In terminal : 'pip install -r requirements.txt'
@@ -61,7 +62,7 @@ Medical AImaging was our Le Wagon bootcamp project focused on detecting 36 disea
 <br/>
 
 <p><b>Original models : </b> Organ Classifier (99.9% accuracy) > Disease detection (90~99% accuracy) > Disease classifier (55~90% accuracy)</p>
-<p><b>Small models : </b> Organ Classifier (99.9% accuracy) > Disease classifier (46~70% accuracy)</p>
+<p><b>Small models : </b> Organ Classifier (99.9% accuracy) > Disease classifier with healthy included (46~70% accuracy)</p>
 
 <footer>
 </footer>
