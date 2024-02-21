@@ -10,14 +10,14 @@
 
 <img src="https://raw.githubusercontent.com/rkassila/Medical_AImaging/master/aimaging/interface/images/title_image.png" alt="Medical AImaging" width="1280" align="right">
 
-# Medical AIMaging
+# Medical AImaging
 
 _A deep learning solution designed for the detection of diseases in Magnetic Resonance (MR) and Computed Tomography (CT) images, utilizing Convolutional Neural Networks (CNN)._
 
 ## Project Overview
 
 Trained on the [Rad Image Net dataset](https://www.radimagenet.com), this project is an exploration into medical diagnostics using deep learning. 
-Medical AIMaging was our Le Wagon bootcamp project focused on detecting 36 diseases across 5 organs. 
+Medical AImaging was our Le Wagon bootcamp project focused on detecting 36 diseases across 5 organs. 
 
 ### Demo
 
@@ -45,6 +45,18 @@ Medical AIMaging was our Le Wagon bootcamp project focused on detecting 36 disea
     <td align="center">Disease Detection</td>
   </tr>
 </table>
+
+--
+## How to use ?
+<p>
+  <i>To be able to test the app, I've created small models : to be able to upload on GitHub, original models being > 2 Gb in total. Those small models performance is poor (46-70% accuracy) and don't perform with GradCAM (AI Vision). I will try to create intermediate versions in the future that will allow better performances and upload in GitHub while maintaining sufficient performance. Images displayed on this ReadMe have been made with original models.</i>
+
+- Download the repository
+- In terminal : 'pip install -r requirements.txt'
+- In terminal : 'run-api' to start the api
+- In terminal : 'streamlit run aimaging/interface/main.py' to start the interface and be able to test the app
+
+</p>
 
 <footer>
 </footer>
