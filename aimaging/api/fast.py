@@ -72,6 +72,7 @@ async def predict_organ(file: UploadFile = File(...)):
 
         is_healthy = 0
 
+        disease_status = 'healthy'
 
         if disease_prediction != 'normal':
             is_healthy = 1
