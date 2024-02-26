@@ -60,7 +60,11 @@ git clone https://github.com/rkassila/Medical_AImaging.git
 pip install -r requirements.txt
 pip install .
 sudo apt-get update && sudo apt-get install ffmpeg libsm6 libxext6 -y
+```
+```bash
 run-api
+```
+```bash
 streamlit run aimaging/interface/main.py
 ```
 
