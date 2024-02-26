@@ -54,6 +54,9 @@ Medical AImaging was our Le Wagon bootcamp project focused on detecting 36 disea
 
 - Download the repository
 ```bash
+git clone https://github.com/rkassila/Medical_AImaging.git
+```
+```bash
 pip install -r requirements.txt
 pip install .
 sudo apt-get update && sudo apt-get install ffmpeg libsm6 libxext6 -y
