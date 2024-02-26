@@ -56,14 +56,17 @@ Medical AImaging was our Le Wagon bootcamp project focused on detecting 36 disea
 ```bash
 git clone https://github.com/rkassila/Medical_AImaging.git
 ```
+- Install requirements and app
 ```bash
 pip install -r requirements.txt
 pip install .
 sudo apt-get update && sudo apt-get install ffmpeg libsm6 libxext6 -y
 ```
+- Run the API locally
 ```bash
 run-api
 ```
+- Run the interface with streamlit
 ```bash
 streamlit run aimaging/interface/main.py
 ```
