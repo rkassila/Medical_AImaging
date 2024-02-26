@@ -53,9 +53,13 @@ Medical AImaging was our Le Wagon bootcamp project focused on detecting 36 disea
     Those small models accuracy (46-70%) is not as good as the original models (see below for explanations) but is offering sufficient performance considenring the reduction of size : original diseases classifiers were over 700Mb each + 200Mb for binary detection (diseased or not), small models are 2.5Mb for both usages.<br/> Images displayed on this ReadMe have been made with original models.</i>
 
 - Download the repository
-- In terminal : 'pip install -r requirements.txt'
-- In terminal : 'run-api' to start the api
-- In terminal : 'streamlit run aimaging/interface/main.py' to start the interface and be able to test the app
+```bash
+pip install -r requirements.txt
+pip install .
+apt-get update && apt-get install ffmpeg libsm6 libxext6  -y
+run-api
+streamlit run aimaging/interface/main.py
+```
 
 </p>
 
