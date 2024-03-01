@@ -4,6 +4,8 @@ data/
 
 .env
 .env.yaml
+.envrc
+.direnv/
 
 Samples_images
 __pycache__
