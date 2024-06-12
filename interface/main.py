@@ -11,7 +11,11 @@ st.set_page_config(
     layout='wide'
 )
 
+# URL = "https://aimagingr-uz7skuvrea-ew.a.run.app"
+
+# Setting app to local API
 URL = "http://127.0.0.1:8000"
+
 
 def app():
     start_time = time.time()
@@ -19,15 +23,16 @@ def app():
     # Title image
     title_col1, title_col2, title_col3 = st.columns([1, 1, 1])
     with title_col2:
-        title_image = Image.open('aimaging/interface/images/title_image.png')
+        title_image = Image.open('interface/images/title_image.png')
         title_image = title_image.resize((1696, 541))
         st.image(title_image, use_column_width=True, width=550)
 
     # Read the image
-    image = Image.open('aimaging/interface/images/streamlit_bg.png')
+    image = Image.open('interface/images/streamlit_bg.png')
     st.image(image, use_column_width=True)
 
-    uploaded_image = st.file_uploader("Upload an image of your organ", type=["jpg", "jpeg", "png"])
+    uploaded_image = st.file_uploader(
+        "Upload an image of your organ", type=["jpg", "jpeg", "png"])
 
     if uploaded_image is not None:
         # Display the uploaded image
@@ -49,7 +54,8 @@ def app():
 
             for percent_complete in range(100):
                 time.sleep(0.001)
-                progress_bar.progress(percent_complete + 1, "Processing Images...")
+                progress_bar.progress(
+                    percent_complete + 1, "Processing Images...")
                 time.sleep(0.001)
 
             # Perform the scanning process here
@@ -69,17 +75,19 @@ def app():
                 disease_status = result['Disease Status'].lower()
 
                 if disease_status == 'diseased':
-                    progress_bar = st.progress(0, text="Testing for Diseases...")
+                    progress_bar = st.progress(
+                        0, text="Testing for Diseases...")
 
                     for percent_complete in range(100):
                         time.sleep(0.05)
-                        progress_bar.progress(percent_complete + 1, "Testing for Diseases...")
+                        progress_bar.progress(
+                            percent_complete + 1, "Testing for Diseases...")
                         time.sleep(0.05)
 
                     with st.expander("Disease Detection"):
                         display_disease_estimation(result)
 
-                         # Display two grad images side by side
+                        # Display two grad images side by side
                         col1, col2 = st.columns(2)
                         with col1:
                             display_grad_image(1)
@@ -87,7 +95,8 @@ def app():
                             display_grad_image(2)
 
             else:
-                st.warning("Unable to retrieve 'Disease Status' from the result.")
+                st.warning(
+                    "Unable to retrieve 'Disease Status' from the result.")
 
     end_time = time.time()
     elapsed_time = end_time - start_time
@@ -124,7 +133,8 @@ def scan_image(image):
 def display_prediction(result):
     organ = result.get('Organ', 'N/A')
     disease_status = result.get('Disease Status', 'N/A')
-    organ_emojis = {'brain': '🧠', 'spine': '🩻', 'knee': '🦵', 'lung': '🫁', 'shoulder': '💪'}
+    organ_emojis = {'brain': '🧠', 'spine': '🩻',
+                    'knee': '🦵', 'lung': '🫁', 'shoulder': '💪'}
     disease_emoji = {'healthy': '✅', 'diseased': '⚠️'}
 
     new_col1, new_col2 = st.columns(2)
@@ -169,7 +179,8 @@ def display_disease_estimation(result):
                                     key=lambda x: x[1], reverse=True)
 
         labels = [class_name for class_name, _ in sorted_predictions[:3]]
-        percentages = [percentage * 100 for _, percentage in sorted_predictions[:3]]
+        percentages = [percentage * 100 for _,
+                       percentage in sorted_predictions[:3]]
 
         colors = ['#fc9b9b', '#e65555', '#e20000']
 
@@ -213,6 +224,8 @@ def display_grad_image(grad_number):
             st.error(f"Error opening Grad image {grad_number}: {e}")
 
 # Function to get class names based on the organ
+
+
 def get_class_names(organ):
     class_names = {
         "knee": ['Soft Fluid', 'Anterior Cruciate Ligament Injury', 'Bone Inflammation', 'Chondral Injury', 'Fracture',
@@ -220,12 +233,14 @@ def get_class_names(organ):
         "brain": ['Acute Infarction', 'Chronic Infarction', 'Extra-axial Pathology', 'Focal Flair Hyperintensity',
                   'Intra-brain Pathology', 'White Matter Changes'],
         "shoulder": ['Acromioclavicular Joint Osteoarthritis', 'Biceps Pathology', 'Glenohumeral Joint Osteoarthritis',
-                     'Labral Pathology', 'Marrow Inflammation', 'Osseous Lesion','Post-operative Changes', 'Soft Tissue Edema',
+                     'Labral Pathology', 'Marrow Inflammation', 'Osseous Lesion', 'Post-operative Changes', 'Soft Tissue Edema',
                      'Soft Tissue Fluid in Shoulder', 'Supraspinatus Pathology'],
         "spine": ['Cord Pathology', 'Cystic Lesions', 'Disc Pathology', 'Osseous Abnormalities'],
-        "lung": [ 'Airspace Opacity', 'Bronchiectasis', 'Nodule', 'Parenchyma Destruction', 'Interstitial Lung Disease']
+        "lung": ['Airspace Opacity', 'Bronchiectasis', 'Nodule', 'Parenchyma Destruction', 'Interstitial Lung Disease']
     }
-    return class_names.get(organ, [])  # Return an empty list if organ is not found
+    # Return an empty list if organ is not found
+    return class_names.get(organ, [])
+
 
 if __name__ == "__main__":
     app()

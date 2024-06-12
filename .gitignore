@@ -1,6 +1,12 @@
 data/
+models/
 .DS_Store
 .python-version
 
-models/
-__pycache__
+.env
+.envrc
+*/__pycache__
+aimaging.egg-info/
+*/.ipynb_checkpoints
+
+requirements_prod.txt
